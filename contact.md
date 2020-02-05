@@ -1,13 +1,13 @@
 # Collaborator Contact Information
 
 ## Adrian Ionescu
-_email:_ aiones@uw.edu
+__email:__ aiones@uw.edu
 
 ## Madison Laughlin
-_email:_ laughmj5@uw.edu
+__email:__ laughmj5@uw.edu
 
 ## Mikias Lema
-_email:_ mikias@uw.edu
+__email:__ mikias@uw.edu
 
 ## Tristan Macelli
-_email:_ tmacelli@uw.edu
+__email:__ tmacelli@uw.edu
