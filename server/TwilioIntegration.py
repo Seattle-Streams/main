@@ -5,21 +5,30 @@ class TwilioIntegration:
     def __init__(self, authToken):
         self.authToken = authToken
 
-    # Authenticate w/ Twilio & store token in S3
+    # Authenticate w/ Twilio & store token in Token Store (S3)
     def TwilioAuth():
         
-        # Gets Twilio auth token from Token Store (S3 in our case) to send requests
+    # Gets Twilio auth token from Token Store (S3) to send requests
     def GetStoredToken():
 
     # GET request to Twillio for messages
     def GETTwilioMessages():
+        # IF token is expired,
+        if ():
+            # re-authenticate with Twilio
+            # Store auth token in Token Store (S3)
+
+        badStatus = True
         URL = "URL for Twilio"
         PARAMS = {'param_key':param_value} 
-        
-        # sending get request and saving the response as response object 
-        response = requests.POST(url = URL, params = PARAMS) 
-        # extracting data in json format 
-        data = response.json()
+    
+        while badStatus:
+            # sending GET request for Twilio messages
+            response = requests.GET(url = URL, params = PARAMS) 
+            data = response.json()
+            # TODO: Check that this is the proper way to check response status
+            if (data["status"] < 400 & data["status"] > 199):
+                badStatus = False
 
     # Reshape data
     def ShapeMessages():
