@@ -32,7 +32,8 @@ class YoutubeIntegration:
             
             # sending get request and saving the response as response object 
             response = requests.POST(url = URL, params = PARAMS) 
-
+            # extracting data in json format 
+            data = response.json()
             if ():
                 statusOK = false
 
