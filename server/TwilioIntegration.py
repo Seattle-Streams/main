@@ -1,4 +1,5 @@
 import requests
+import pika
 
 # GETting SMS messages from Twilio & sending to MQ
 class TwilioIntegration:
@@ -34,12 +35,16 @@ class TwilioIntegration:
     def ShapeMessages():
 
     # Send messages to MQ
-    def ProduceMessages():
-        # Connect to MQ
+    def ProduceMessages(channel, messages):
+        for message in messages:
+            channel.basic_publish(exchange='', routing_key='youtube-messages', body='{message}')
 
     def ProcessMessages():
         # Connect to MQ
+        connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+        channel = connection.channel()
+        channel.queue_declare(queue='youtube-messages')
         
-        GETTwilioMessages()
-        ShapeMessages()
-        ProduceMessages()
+        messages = GETTwilioMessages()
+        final_messages = ShapeMessages(messages)
+        ProduceMessages(channel, final_messages)

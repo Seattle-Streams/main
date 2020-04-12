@@ -1,4 +1,4 @@
-import requests
+import pika
 import os
 
 import google_auth_oauthlib.flow
@@ -32,26 +32,16 @@ class YoutubeIntegration:
         
     # Gets YT auth token from Token Store (S3 in our case) to send requests
     def GetStoredToken():
-
-    # PULL Messages from MQ
-    def ConsumeMessages():
-
-    # Reshape data
-    def ShapeMessages():
+        # TODO: implement this method
 
     # SEND POST Requests to YT Live
-    def POSTMessages(messages):
+    def POSTMessage(ch, method, properties, body):
         # IF token is expired,
         if ():
             # re-authenticate with YT
             # Store auth token in Token Store (S3)
-        
         badStatus = True
-    
-        splitMessage = message.split(" ", 1)
-        name = splitMessage[0]
-        body = splitMessage[1]
-            
+        name, body = ShapeMessage(body)
         while badStatus:
             # sending POST request, inserting messages into LiveChat
             request = youtube.liveChatMessages().insert(
@@ -77,17 +67,24 @@ class YoutubeIntegration:
             else:
                 # re-authenticate to generate auth token
 
+    # 
+    # def callback(ch, method, properties, body):
+    #     print(" [x] Received %r" % body)
 
+    # Reshape data
+    def ShapeMessage(body):
+        splitBody = body.split(" ", 1)
+        name = splitBody[0]
+        message = splitBody[1]
+        return name, message
 
     def ProcessMessages():   
         # Connect to MQ
-
-        # PULL Messages from MQ
-        ConsumeMessages()
-
-        # Reshape data
-        ShapeMessages()
-
-        # SEND POST Requests to YT Live
-        POSTMessages()
-
+        connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+        channel = connection.channel()
+        channel.queue_declare(queue='youtube-messages')
+        channel.basic_consume(queue='youtube-messages',
+                    auto_ack=True,
+                    on_message_callback=POSTMessage)
+        # The following starts an infinite loop that waits for & consumes messages
+        channel.start_consuming()
