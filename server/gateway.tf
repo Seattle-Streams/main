@@ -19,13 +19,21 @@ resource "aws_api_gateway_method" "method" {
 }
 
 # Links API Gateway to Twilio Lambda
-resource "aws_api_gateway_integration" "integration" {
+resource "aws_api_gateway_integration" "lambda_integration" {
   rest_api_id             = "${aws_api_gateway_rest_api.messageAPI.id}"
   resource_id             = "${aws_api_gateway_resource.resource.id}"
   http_method             = "${aws_api_gateway_method.method.http_method}"
   integration_http_method = "${var.process_message_method}"
   type                    = "AWS_PROXY"
   uri                     = "${aws_lambda_function.twilio_lambda.invoke_arn}"
+}
+
+resource "aws_api_gateway_deployment" "messages_deployment" {
+  depends_on = ["aws_api_gateway_integration.lambda_integration"]
+
+  rest_api_id = "${aws_api_gateway_rest_api.messageAPI.id}"
+  stage_name  = "v1"
+  description = "Initial deployment"
 }
 
 # This is used to get the account_id required for the lambda invokation permission below

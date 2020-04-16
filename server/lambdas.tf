@@ -5,13 +5,13 @@
 data "archive_file" "twilio_zip" {
   type        = "zip"
   source_file = "TwilioIntegration.py"
-  output_path = "lambda_function.zip"
+  output_path = "twilio_function.zip"
 }
 
 data "archive_file" "youtube_zip" {
   type        = "zip"
   source_file = "YoutubeIntegration.py"
-  output_path = "lambda_function.zip"
+  output_path = "youtube_function.zip"
 }
 
 data "aws_iam_policy_document" "lambda_policy" {

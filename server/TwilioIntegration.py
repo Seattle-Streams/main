@@ -1,16 +1,13 @@
-import requests
+import json
 
 # GETting SMS messages from Twilio & sending to MQ
 
-
 # Reshape data
-def ShapeMessage(message):
-    print(message)
-    return message.body
+# def ShapeMessage(message):
+#     print(message)
+#     return message.body
 
 
 def ProcessMessage(event, context):
-    print(event)
-    final_message = ShapeMessage(event.message)
-    print(final_message)
-    return {'statusCode': 200, 'body': json.dumps('Hello from Lambda!')}
+    return {'statusCode': 200, 'body': json.dumps(event)}
+    # return {'statusCode': 200, 'body': json.dumps('Hello from Lambda!')}
