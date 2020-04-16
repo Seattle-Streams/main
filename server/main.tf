@@ -1,4 +1,4 @@
 provider "aws" {
-  profile = "default"
+  profile = "devops"
   region  = "${var.region}"
 }
