@@ -45,7 +45,7 @@ def ShapeMessage(body):
     return name, message
 
 # SEND POST Requests to YT Live
-def ProcessMessages():
+def ProcessMessage():
     badStatus = True
     name, body = ShapeMessage(body)
     # sending POST request, inserting messages into LiveChat

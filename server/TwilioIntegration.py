@@ -9,7 +9,8 @@ def ShapeMessage(message):
     return message.body
 
 
-def ProcessMessages(event, context):
+def ProcessMessage(event, context):
     print(event)
     final_message = ShapeMessage(event.message)
     print(final_message)
+    return {'statusCode': 200, 'body': json.dumps('Hello from Lambda!')}
