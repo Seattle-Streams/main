@@ -3,16 +3,18 @@ resource "aws_api_gateway_rest_api" "messageAPI" {
   description = "This is the Civic Coffee Hour API"
 }
 
+# This is what creates the endpoint & path
 resource "aws_api_gateway_resource" "resource" {
-  path_part   = "resource"
+  path_part   = "process-message"
   parent_id   = "${aws_api_gateway_rest_api.messageAPI.root_resource_id}"
   rest_api_id = "${aws_api_gateway_rest_api.messageAPI.id}"
 }
 
+# This is what creates the method allowed for the endpoint
 resource "aws_api_gateway_method" "method" {
   rest_api_id   = "${aws_api_gateway_rest_api.messageAPI.id}"
   resource_id   = "${aws_api_gateway_resource.resource.id}"
-  http_method   = "POST"
+  http_method   = "${var.process_message_method}"
   authorization = "NONE"
 }
 
@@ -21,12 +23,13 @@ resource "aws_api_gateway_integration" "integration" {
   rest_api_id             = "${aws_api_gateway_rest_api.messageAPI.id}"
   resource_id             = "${aws_api_gateway_resource.resource.id}"
   http_method             = "${aws_api_gateway_method.method.http_method}"
-  integration_http_method = "POST"
+  integration_http_method = "${var.process_message_method}"
   type                    = "AWS_PROXY"
   uri                     = "${aws_lambda_function.twilio_lambda.invoke_arn}"
 }
 
-# This gets us the 
+# This is used to get the account_id required for the lambda invokation permission below
+# Found here: https://www.terraform.io/docs/providers/aws/d/caller_identity.html
 data "aws_caller_identity" "current" {}
 
 # Allows Gateway to invoke our first Lambda

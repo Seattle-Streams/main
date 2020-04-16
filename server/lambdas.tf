@@ -14,7 +14,7 @@ data "archive_file" "youtube_zip" {
   output_path = "lambda_function.zip"
 }
 
-data "aws_iam_policy_document" "send_policy" {
+data "aws_iam_policy_document" "lambda_policy" {
   statement {
     sid    = ""
     effect = "Allow"
@@ -28,30 +28,9 @@ data "aws_iam_policy_document" "send_policy" {
   }
 }
 
-data "aws_iam_policy_document" "receive_policy" {
-  statement {
-    sid    = ""
-    effect = "Allow"
-
-    principals {
-      identifiers = ["lambda.amazonaws.com"]
-      type        = "Service"
-    }
-
-    actions = [
-      "sts:AssumeRole",
-    ]
-  }
-}
-
-resource "aws_iam_role" "iam_twilio_lambda" {
-  name               = "iam_twilio_lambda"
-  assume_role_policy = "${data.aws_iam_policy_document.send_policy.json}"
-}
-
-resource "aws_iam_role" "iam_youtube_lambda" {
-  name               = "iam_youtube_lambda"
-  assume_role_policy = "${data.aws_iam_policy_document.receive_policy.json}"
+resource "aws_iam_role" "iam_lambda_execution_role" {
+  name               = "lambda_execution_role"
+  assume_role_policy = "${data.aws_iam_policy_document.lambda_policy.json}"
 }
 
 # Lambdas
@@ -61,10 +40,10 @@ resource "aws_lambda_function" "twilio_lambda" {
   filename         = "${data.archive_file.twilio_zip.output_path}"
   source_code_hash = "${data.archive_file.twilio_zip.output_base64sha256}"
 
-  role    = "${aws_iam_role.iam_twilio_lambda.arn}"
+  role    = "${aws_iam_role.iam_lambda_execution_role.arn}"
   handler = "TwilioIntegration.ProcessMessage"
   runtime = "${var.runtime}"
-  timeout = "${var.timeout}"
+  #   timeout = "${var.timeout}"
   depends_on = [
     "aws_iam_role_policy_attachment.lambda_logs",
   ]
@@ -76,10 +55,10 @@ resource "aws_lambda_function" "youtube_lambda" {
   filename         = "${data.archive_file.twilio_zip.output_path}"
   source_code_hash = "${data.archive_file.twilio_zip.output_base64sha256}"
 
-  role    = "${aws_iam_role.iam_youtube_lambda.arn}"
+  role    = "${aws_iam_role.iam_lambda_execution_role.arn}"
   handler = "YoutubeIntegration.ProcessMessage"
   runtime = "${var.runtime}"
-  timeout = "${var.timeout}"
+  #   timeout = "${var.timeout}"
   depends_on = [
     "aws_iam_role_policy_attachment.lambda_logs",
   ]
@@ -95,7 +74,7 @@ resource "aws_lambda_function" "youtube_lambda" {
 # We can skip this resource configuration, but then we need to add "logs:CreateLogGroup" 
 # to the IAM policy below.
 # resource "aws_cloudwatch_log_group" "lambda_log_group" {
-#   name              = "/aws/lambda/${aws_lambda_function.function_name}"
+#   name              = "/aws/lambda/"
 #   retention_in_days = 28
 # }
 
@@ -122,6 +101,6 @@ data "aws_iam_policy_document" "log_policy" {
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
-  role       = "${aws_iam_role.iam_twilio_lambda.name}"
+  role       = "${aws_iam_role.iam_lambda_execution_role.name}"
   policy_arn = "${aws_iam_policy.lambda_logging.arn}"
 }
