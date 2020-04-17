@@ -1,13 +1,28 @@
 import json
+# import boto3
+
+# sqs = boto3.client('sqs')
+
+QUEUE_URL = 'https://sqs.us-east-1.amazonaws.com/{AWS_ACCUOUNT}/sms_queue'
 
 # GETting SMS messages from Twilio & sending to MQ
 
+
 # Reshape data
-# def ShapeMessage(message):
-#     print(message)
-#     return message.body
+def ShapeMessage(message):
+    message = message.split("Body=", 1)[1]
+    message = message.split("&FromCountry", 1)[0]
+    message = message.replace("+", " ")
+    return message
 
 
 def ProcessMessage(event, context):
-    return {'statusCode': 200, 'body': json.dumps(event)}
-    # return {'statusCode': 200, 'body': json.dumps('Hello from Lambda!')}
+    # The context of the text message from Twilio
+    # print(event['body'])
+    message = ShapeMessage(event['body'])
+
+    print("SMS Message: ", message)
+    # TODO: Attach permissions to this lambda so it can send messages to SQS
+    # response = sqs.send_message(QueueUrl=QUEUE_URL, MessageBody=message)
+    # print(response)
+    return {'statusCode': 200, 'body': message}

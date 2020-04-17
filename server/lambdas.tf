@@ -46,6 +46,7 @@ resource "aws_lambda_function" "twilio_lambda" {
   #   timeout = "${var.timeout}"
   depends_on = [
     "aws_iam_role_policy_attachment.lambda_logs",
+    "aws_cloudwatch_log_group.lambda_log_group"
   ]
 }
 
@@ -61,6 +62,7 @@ resource "aws_lambda_function" "youtube_lambda" {
   #   timeout = "${var.timeout}"
   depends_on = [
     "aws_iam_role_policy_attachment.lambda_logs",
+    "aws_cloudwatch_log_group.lambda_log_group"
   ]
 }
 
@@ -73,10 +75,10 @@ resource "aws_lambda_function" "youtube_lambda" {
 # This is to manage the CloudWatch Log Group for the Lambda Function.
 # We can skip this resource configuration, but then we need to add "logs:CreateLogGroup" 
 # to the IAM policy below.
-# resource "aws_cloudwatch_log_group" "lambda_log_group" {
-#   name              = "/aws/lambda/"
-#   retention_in_days = 28
-# }
+resource "aws_cloudwatch_log_group" "lambda_log_group" {
+  name              = "/aws/lambda/"
+  retention_in_days = 30
+}
 
 # See also the following AWS managed policy: AWSLambdaBasicExecutionRole
 resource "aws_iam_policy" "lambda_logging" {
@@ -103,4 +105,16 @@ data "aws_iam_policy_document" "log_policy" {
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
   role       = "${aws_iam_role.iam_lambda_execution_role.name}"
   policy_arn = "${aws_iam_policy.lambda_logging.arn}"
+}
+
+resource "aws_sqs_queue" "sms_queue" {
+  name                      = "sms_queue"
+  delay_seconds             = 0
+  max_message_size          = 2048
+  message_retention_seconds = 3600
+  receive_wait_time_seconds = 0
+
+  tags = {
+    Environment = "production"
+  }
 }
