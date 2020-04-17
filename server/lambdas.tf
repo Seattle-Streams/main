@@ -26,6 +26,21 @@ data "aws_iam_policy_document" "lambda_policy" {
 
     actions = ["sts:AssumeRole", ]
   }
+
+  statement {
+    effect = "Allow"
+
+    principals {
+      identifiers = ["lambda.amazonaws.com"]
+      type        = "Service"
+    }
+
+    actions = ["sqs:SendMessage"]
+
+    resources = ["arn:aws:sqs:${var.region}:${data.aws_caller_identity.current.account_id}:sms_queue.fifo"]
+
+  }
+
 }
 
 resource "aws_iam_role" "iam_lambda_execution_role" {
@@ -53,8 +68,8 @@ resource "aws_lambda_function" "twilio_lambda" {
 resource "aws_lambda_function" "youtube_lambda" {
   function_name = "youtube_lambda"
 
-  filename         = "${data.archive_file.twilio_zip.output_path}"
-  source_code_hash = "${data.archive_file.twilio_zip.output_base64sha256}"
+  filename         = "${data.archive_file.youtube_zip.output_path}"
+  source_code_hash = "${data.archive_file.youtube_zip.output_base64sha256}"
 
   role    = "${aws_iam_role.iam_lambda_execution_role.arn}"
   handler = "YoutubeIntegration.ProcessMessage"
@@ -65,11 +80,6 @@ resource "aws_lambda_function" "youtube_lambda" {
     "aws_cloudwatch_log_group.lambda_log_group"
   ]
 }
-
-# resource "aws_lambda_event_source_mapping" "sqs_message" {
-#   event_source_arn = "${aws_sqs_queue.sqs_queue_test.arn}"
-#   function_name    = "${aws_lambda_function.youtube_lambda.arn}"
-# }
 
 
 # This is to manage the CloudWatch Log Group for the Lambda Function.
@@ -107,14 +117,14 @@ resource "aws_iam_role_policy_attachment" "lambda_logs" {
   policy_arn = "${aws_iam_policy.lambda_logging.arn}"
 }
 
+# FIFO Queue
 resource "aws_sqs_queue" "sms_queue" {
-  name                      = "sms_queue"
-  delay_seconds             = 0
-  max_message_size          = 2048
-  message_retention_seconds = 3600
-  receive_wait_time_seconds = 0
+  name                        = "sms_queue.fifo"
+  fifo_queue                  = true
+  content_based_deduplication = true
+}
 
-  tags = {
-    Environment = "production"
-  }
+resource "aws_lambda_event_source_mapping" "sqs_message" {
+  event_source_arn = "${aws_sqs_queue.sms_queue.arn}"
+  function_name    = "${aws_lambda_function.youtube_lambda.arn}"
 }

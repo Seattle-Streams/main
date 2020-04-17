@@ -14,3 +14,12 @@ variable "timeout" {
 variable "process_message_method" {
   default = "POST"
 }
+
+variable "aws_access_key" {
+  default = ""
+}
+
+variable "aws_secret_key" {
+  default = ""
+}
+
