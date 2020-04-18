@@ -1,6 +1,7 @@
 # Simple AWS Lambda Terraform Example
 # to deploy: run `terraform apply`
 # to destroy: run `terraform destroy`
+variable "runtime" {}
 
 data "archive_file" "twilio_zip" {
   type        = "zip"

@@ -1,3 +1,4 @@
+variable "process_message_method" {}
 resource "aws_api_gateway_rest_api" "messageAPI" {
   name        = "messageAPI"
   description = "This is the Civic Coffee Hour API"
