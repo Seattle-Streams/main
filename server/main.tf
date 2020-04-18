@@ -1,3 +1,7 @@
+variable "AWS_SECRET_ACCESS_KEY" {}
+variable "AWS_ACCESS_KEY_ID" {}
+variable "region" {}
+
 provider "aws" {
   profile    = "devops"
   access_key = "${var.AWS_ACCESS_KEY_ID}"
