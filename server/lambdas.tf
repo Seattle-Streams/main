@@ -45,9 +45,15 @@ resource "aws_lambda_function" "twilio_lambda" {
   handler = "TwilioIntegration.ProcessMessage"
   runtime = "${var.runtime}"
   #   timeout = "${var.timeout}"
+  environment {
+    variables = {
+      SQS_URL = "${aws_sqs_queue.sms_queue.id}"
+    }
+  }
   depends_on = [
     "aws_iam_role_policy_attachment.lambda_logs",
-    "aws_cloudwatch_log_group.lambda_log_group"
+    "aws_cloudwatch_log_group.lambda_log_group",
+    "aws_sqs_queue.sms_queue"
   ]
 }
 

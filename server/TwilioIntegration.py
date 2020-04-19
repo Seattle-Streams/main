@@ -1,9 +1,10 @@
 import json
 # import boto3
+import os
 
 # sqs = boto3.client('sqs')
 
-QUEUE_URL = 'https://sqs.us-east-1.amazonaws.com/{AWS_ACCUOUNT}/sms_queue'
+QUEUE_URL = os.environ['SQS_URL']
 
 # GETting SMS messages from Twilio & sending to MQ
 
