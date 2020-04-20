@@ -1,16 +1,14 @@
 import json
-import boto
 import os
-
-# sqs = boto.client('sqs')
-queue = boto.sqs.connect(
-    'sqs',
-    'us-west-2',
-)
+# import boto3
 
 QUEUE_URL = os.environ['SQS_URL']
 
-# GETting SMS messages from Twilio & sending to MQ
+# sqs = boto3.client('sqs')
+# queue = boto3.sqs.connect(
+#     'sqs',
+#     'us-west-2',
+# )
 
 
 # Reshape data

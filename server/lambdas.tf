@@ -5,8 +5,13 @@ variable "runtime" {}
 
 data "archive_file" "twilio_zip" {
   type        = "zip"
-  source_file = "TwilioIntegration.py"
   output_path = "twilio_function.zip"
+
+  #   source_file = "TwilioIntegration.py"
+  source {
+    content  = "TwilioIntegration.py"
+    filename = "TwilioIntegration.py"
+  }
 }
 
 data "archive_file" "youtube_zip" {
