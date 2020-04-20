@@ -114,6 +114,14 @@ resource "aws_iam_role_policy_attachment" "lambda_logs" {
   policy_arn = "${aws_iam_policy.lambda_logging.arn}"
 }
 
+resource "aws_iam_policy" "lambda_sending" {
+  name        = "lambda_sending"
+  path        = "/"
+  description = "IAM policy for sending to sqs from a lambda"
+
+  policy = "${data.aws_iam_policy_document.lambda_send_policy.json}"
+}
+
 data "aws_iam_policy_document" "lambda_send_policy" {
   statement {
     sid    = ""
@@ -129,7 +137,7 @@ data "aws_iam_policy_document" "lambda_send_policy" {
 
 resource "aws_iam_role_policy_attachment" "lambda_send" {
   role       = "${aws_iam_role.iam_lambda_execution_role.name}"
-  policy_arn = "${aws_iam_policy.lambda_send_policy.arn}"
+  policy_arn = "${aws_iam_policy.lambda_sending.arn}"
 }
 
 resource "aws_sqs_queue" "sms_queue" {
