@@ -44,7 +44,7 @@ resource "aws_lambda_function" "twilio_lambda" {
   role    = "${aws_iam_role.iam_lambda_execution_role.arn}"
   handler = "TwilioIntegration.ProcessMessage"
   runtime = "${var.runtime}"
-  #   timeout = "${var.timeout}"
+  timeout = "${var.timeout}"
   environment {
     variables = {
       SQS_URL = "${aws_sqs_queue.sms_queue.id}"
