@@ -28,6 +28,16 @@ data "aws_iam_policy_document" "lambda_policy" {
 
     actions = ["sts:AssumeRole", ]
   }
+  statement {
+    sid    = ""
+    effect = "Allow"
+    actions = [
+      "sqs:SendMessage"
+    ]
+    resources = [
+      "${aws_sqs_queue.sms_queue.arn}"
+    ]
+  }
 }
 
 resource "aws_iam_role" "iam_lambda_execution_role" {
@@ -53,7 +63,6 @@ resource "aws_lambda_function" "twilio_lambda" {
   }
   depends_on = [
     "aws_iam_role_policy_attachment.lambda_logs",
-    "aws_sqs_queue.sms_queue"
   ]
 }
 
@@ -127,28 +136,28 @@ resource "aws_sqs_queue" "sms_queue" {
   }
 }
 
-resource "aws_sqs_queue_policy" "test" {
-  queue_url = "${aws_sqs_queue.sms_queue.id}"
+# resource "aws_sqs_queue_policy" "test" {
+#   queue_url = "${aws_sqs_queue.sms_queue.id}"
 
-  policy = "${data.aws_iam_policy_document.sqs_policy.json}"
-}
+#   policy = "${data.aws_iam_policy_document.sqs_policy.json}"
+# }
 
-data "aws_iam_policy_document" "sqs_policy" {
-  statement {
-    sid    = "First"
-    effect = "Allow"
+# data "aws_iam_policy_document" "sqs_policy" {
+#   statement {
+#     sid    = "First"
+#     effect = "Allow"
 
-    actions = [
-      "sqs:SendMessage",
-    ]
-    resources = ["aws_sqs_queue.sms_queue.arn"]
-    condition {
-      test     = "StringEquals"
-      variable = "aws:SourceArn"
+#     actions = [
+#       "sqs:SendMessage",
+#     ]
+#     resources = ["aws_sqs_queue.sms_queue.arn"]
+#     condition {
+#       test     = "StringEquals"
+#       variable = "aws:SourceArn"
 
-      values = [
-        "${aws_lambda_function.twilio_lambda.arn}"
-      ]
-    }
-  }
-}
+#       values = [
+#         "${aws_lambda_function.twilio_lambda.arn}"
+#       ]
+#     }
+#   }
+# }
