@@ -4,6 +4,36 @@ resource "aws_api_gateway_rest_api" "messageAPI" {
   description = "This is the Civic Coffee Hour API"
 }
 
+# This will allow us to set a static domain name such as api.example.com
+# TODO: Research acm certificates
+# TODO: Discuss purchasing a domain name for the api & what the domain should be
+# resource "aws_api_gateway_domain_name" "api_domain" {
+#   domain_name     = "api.our-domain.com"
+#   certificate_arn = "${aws_acm_certificate_validation.example.certificate_arn}"
+# }
+
+# Example DNS record using Route53.
+# Route53 is not specifically required; any DNS host can be used.
+# resource "aws_route53_record" "api" {
+#   name    = "${aws_api_gateway_domain_name.api_domain.domain_name}"
+#   type    = "A"
+#   zone_id = "${aws_route53_zone.api.id}"
+
+#   alias {
+#     evaluate_target_health = true
+#     name                   = "${aws_api_gateway_domain_name.api_domain.cloudfront_domain_name}"
+#     zone_id                = "${aws_api_gateway_domain_name.api_domain.cloudfront_zone_id}"
+#   }
+# }
+
+# resource "aws_route53_zone" "api" {
+#   name = "${aws_api_gateway_domain_name.api_domain.domain_name}"
+# }
+
+# https://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-deploy-api.html
+# After adding these resources, we should be able to access the API using
+# https://{api.our-domain.com}/{v1}
+
 # This is what creates the endpoint & path
 resource "aws_api_gateway_resource" "resource" {
   path_part   = "process-message"
