@@ -28,16 +28,6 @@ data "aws_iam_policy_document" "lambda_policy" {
 
     actions = ["sts:AssumeRole", ]
   }
-  statement {
-    sid    = ""
-    effect = "Allow"
-    actions = [
-      "sqs:SendMessage"
-    ]
-    resources = [
-      "${aws_sqs_queue.sms_queue.arn}"
-    ]
-  }
 }
 
 resource "aws_iam_role" "iam_lambda_execution_role" {
@@ -122,6 +112,24 @@ data "aws_iam_policy_document" "log_policy" {
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
   role       = "${aws_iam_role.iam_lambda_execution_role.name}"
   policy_arn = "${aws_iam_policy.lambda_logging.arn}"
+}
+
+data "aws_iam_policy_document" "lambda_send_policy" {
+  statement {
+    sid    = ""
+    effect = "Allow"
+    actions = [
+      "sqs:SendMessage"
+    ]
+    resources = [
+      "${aws_sqs_queue.sms_queue.arn}"
+    ]
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_send" {
+  role       = "${aws_iam_role.iam_lambda_execution_role.name}"
+  policy_arn = "${aws_iam_policy.lambda_send_policy.arn}"
 }
 
 resource "aws_sqs_queue" "sms_queue" {
