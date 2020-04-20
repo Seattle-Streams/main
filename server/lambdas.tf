@@ -130,7 +130,7 @@ resource "aws_sqs_queue" "sms_queue" {
 resource "aws_sqs_queue_policy" "test" {
   queue_url = "${aws_sqs_queue.sms_queue.id}"
 
-  policy = "${data.aws_iam_policy_document.sqs_policy}"
+  policy = "${data.aws_iam_policy_document.sqs_policy.json}"
 }
 
 data "aws_iam_policy_document" "sqs_policy" {
