@@ -135,9 +135,8 @@ resource "aws_sqs_queue_policy" "test" {
 
 data "aws_iam_policy_document" "sqs_policy" {
   statement {
-    sid       = "First"
-    principal = "*"
-    effect    = "Allow"
+    sid    = "First"
+    effect = "Allow"
 
     actions = [
       "sqs:SendMessage",
