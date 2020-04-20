@@ -2,6 +2,7 @@
 # to deploy: run `terraform apply`
 # to destroy: run `terraform destroy`
 variable "runtime" {}
+variable "timeout" {}
 
 # data "archive_file" "twilio_zip" {
 #   type        = "zip"
