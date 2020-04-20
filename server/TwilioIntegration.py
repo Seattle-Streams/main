@@ -22,6 +22,6 @@ def ProcessMessage(event, context):
 
     print("SMS Message: ", message)
     # TODO: Attach permissions to this lambda so it can send messages to SQS
-    # print(sqs.send_message(QueueUrl=QUEUE_URL, MessageBody=message))
+    print(sqs.send_message(QueueUrl=QUEUE_URL, MessageBody=message))
     # print(response)
     return {'statusCode': 200}
