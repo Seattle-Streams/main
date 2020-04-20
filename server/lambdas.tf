@@ -6,12 +6,7 @@ variable "runtime" {}
 data "archive_file" "twilio_zip" {
   type        = "zip"
   output_path = "twilio_function.zip"
-
-  #   source_file = "TwilioIntegration.py"
-  source {
-    content  = "TwilioIntegration.py"
-    filename = "TwilioIntegration.py"
-  }
+  source_dir  = "./dependencies"
 }
 
 data "archive_file" "youtube_zip" {
@@ -43,8 +38,8 @@ resource "aws_iam_role" "iam_lambda_execution_role" {
 resource "aws_lambda_function" "twilio_lambda" {
   function_name = "twilio_lambda"
 
-  filename         = "${data.archive_file.twilio_zip.output_path}"
-  source_code_hash = "${data.archive_file.twilio_zip.output_base64sha256}"
+  filename = "twilio_lambda.zip"
+  #   source_code_hash = "${data.archive_file.twilio_zip.output_base64sha256}"
 
   role    = "${aws_iam_role.iam_lambda_execution_role.arn}"
   handler = "TwilioIntegration.ProcessMessage"

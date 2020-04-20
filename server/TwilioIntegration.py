@@ -1,14 +1,10 @@
 import json
 import os
-# import boto3
+import boto3
 
 QUEUE_URL = os.environ['SQS_URL']
 
-# sqs = boto3.client('sqs')
-# queue = boto3.sqs.connect(
-#     'sqs',
-#     'us-west-2',
-# )
+sqs = boto3.client('sqs')
 
 
 # Reshape data
