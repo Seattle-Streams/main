@@ -3,11 +3,12 @@
 # to destroy: run `terraform destroy`
 variable "runtime" {}
 
-# data "archive_file" "twilio_zip" {
-#   type        = "zip"
-#   output_path = "twilio_function.zip"
-#   source_file = "TwilioIntegration.py"
-# }
+data "archive_file" "twilio_zip" {
+  type        = "zip"
+  output_path = "twilio_function.zip"
+  source_file = "TwilioIntegration.py"
+  source_dir  = "dependencies"
+}
 
 data "archive_file" "youtube_zip" {
   type        = "zip"
