@@ -18,7 +18,6 @@ data "archive_file" "youtube_zip" {
 
 data "aws_iam_policy_document" "lambda_policy" {
   statement {
-    sid    = ""
     effect = "Allow"
 
     principals {
@@ -65,7 +64,7 @@ resource "aws_lambda_function" "youtube_lambda" {
   role    = "${aws_iam_role.iam_lambda_execution_role.arn}"
   handler = "YoutubeIntegration.ProcessMessage"
   runtime = "${var.runtime}"
-  #   timeout = "${var.timeout}"
+  timeout = "${var.timeout}"
   depends_on = [
     "aws_iam_role_policy_attachment.lambda_logs",
   ]
@@ -91,7 +90,6 @@ resource "aws_cloudwatch_log_group" "youtube_lambda_log_group" {
 # See also the following AWS managed policy: AWSLambdaBasicExecutionRole
 resource "aws_iam_policy" "lambda_logging" {
   name        = "lambda_logging"
-  path        = "/"
   description = "IAM policy for logging from a lambda"
 
   policy = "${data.aws_iam_policy_document.log_policy.json}"
@@ -116,7 +114,6 @@ resource "aws_iam_role_policy_attachment" "lambda_logs" {
 
 resource "aws_iam_policy" "lambda_sending" {
   name        = "lambda_sending"
-  path        = "/"
   description = "IAM policy for sending to sqs from a lambda"
 
   policy = "${data.aws_iam_policy_document.lambda_send_policy.json}"
@@ -124,7 +121,6 @@ resource "aws_iam_policy" "lambda_sending" {
 
 data "aws_iam_policy_document" "lambda_send_policy" {
   statement {
-    sid    = ""
     effect = "Allow"
     actions = [
       "sqs:SendMessage"
@@ -151,29 +147,3 @@ resource "aws_sqs_queue" "sms_queue" {
     Environment = "production"
   }
 }
-
-# resource "aws_sqs_queue_policy" "test" {
-#   queue_url = "${aws_sqs_queue.sms_queue.id}"
-
-#   policy = "${data.aws_iam_policy_document.sqs_policy.json}"
-# }
-
-# data "aws_iam_policy_document" "sqs_policy" {
-#   statement {
-#     sid    = "First"
-#     effect = "Allow"
-
-#     actions = [
-#       "sqs:SendMessage",
-#     ]
-#     resources = ["aws_sqs_queue.sms_queue.arn"]
-#     condition {
-#       test     = "StringEquals"
-#       variable = "aws:SourceArn"
-
-#       values = [
-#         "${aws_lambda_function.twilio_lambda.arn}"
-#       ]
-#     }
-#   }
-# }
