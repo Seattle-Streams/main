@@ -35,7 +35,7 @@ resource "aws_iam_role" "iam_lambda_execution_role" {
 }
 
 # Lambdas
-resource "aws_lambda_function" "lambda" {
+resource "aws_lambda_function" "twilio_lambda" {
   function_name = "twilio_lambda"
 
   filename         = "${data.archive_file.twilio_zip.output_path}"
@@ -52,12 +52,12 @@ resource "aws_lambda_function" "lambda" {
   }
   depends_on = [
     "aws_iam_role_policy_attachment.lambda_logs",
-    "aws_cloudwatch_log_group.lambda_log_group",
+    "aws_cloudwatch_log_group.twilio_lambda_log_group",
     "aws_sqs_queue.sms_queue"
   ]
 }
 
-resource "aws_lambda_function" "lambda" {
+resource "aws_lambda_function" "youtube_lambda" {
   function_name = "youtube_lambda"
 
   filename         = "${data.archive_file.twilio_zip.output_path}"
@@ -69,7 +69,7 @@ resource "aws_lambda_function" "lambda" {
   #   timeout = "${var.timeout}"
   depends_on = [
     "aws_iam_role_policy_attachment.lambda_logs",
-    "aws_cloudwatch_log_group.lambda_log_group"
+    "aws_cloudwatch_log_group.youtube_lambda_log_group"
   ]
 }
 
@@ -80,8 +80,13 @@ resource "aws_lambda_function" "lambda" {
 
 
 # This is to manage the CloudWatch Log Group for the Lambda Function.
-resource "aws_cloudwatch_log_group" "lambda_log_group" {
-  name              = "/aws/lambda/${aws_lambda_function.lambda.function_name}"
+resource "aws_cloudwatch_log_group" "twilio_lambda_log_group" {
+  name              = "/aws/lambda/${aws_lambda_function.twilio_lambda.function_name}"
+  retention_in_days = 30
+}
+
+resource "aws_cloudwatch_log_group" "youtube_lambda_log_group" {
+  name              = "/aws/lambda/${aws_lambda_function.youtube_lambda.function_name}"
   retention_in_days = 30
 }
 
