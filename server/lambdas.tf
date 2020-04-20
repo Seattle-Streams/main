@@ -35,7 +35,7 @@ resource "aws_iam_role" "iam_lambda_execution_role" {
 }
 
 # Lambdas
-resource "aws_lambda_function" "twilio_lambda" {
+resource "aws_lambda_function" "lambda" {
   function_name = "twilio_lambda"
 
   filename         = "${data.archive_file.twilio_zip.output_path}"
@@ -57,7 +57,7 @@ resource "aws_lambda_function" "twilio_lambda" {
   ]
 }
 
-resource "aws_lambda_function" "youtube_lambda" {
+resource "aws_lambda_function" "lambda" {
   function_name = "youtube_lambda"
 
   filename         = "${data.archive_file.twilio_zip.output_path}"
@@ -80,10 +80,8 @@ resource "aws_lambda_function" "youtube_lambda" {
 
 
 # This is to manage the CloudWatch Log Group for the Lambda Function.
-# We can skip this resource configuration, but then we need to add "logs:CreateLogGroup" 
-# to the IAM policy below.
 resource "aws_cloudwatch_log_group" "lambda_log_group" {
-  name              = "/aws/lambda/"
+  name              = "/aws/lambda/${aws_lambda_function.lambda.function_name}"
   retention_in_days = 30
 }
 
@@ -101,7 +99,6 @@ data "aws_iam_policy_document" "log_policy" {
     effect = "Allow"
 
     actions = [
-      "logs:CreateLogGroup",
       "logs:CreateLogStream",
       "logs:PutLogEvents"
     ]
