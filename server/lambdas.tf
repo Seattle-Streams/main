@@ -59,8 +59,8 @@ resource "aws_lambda_function" "twilio_lambda" {
 resource "aws_lambda_function" "youtube_lambda" {
   function_name = "youtube_lambda"
 
-  filename         = "${data.archive_file.twilio_zip.output_path}"
-  source_code_hash = "${data.archive_file.twilio_zip.output_base64sha256}"
+  filename         = "${data.archive_file.youtube_zip.output_path}"
+  source_code_hash = "${data.archive_file.youtube_zip.output_base64sha256}"
 
   role    = "${aws_iam_role.iam_lambda_execution_role.arn}"
   handler = "YoutubeIntegration.ProcessMessage"
