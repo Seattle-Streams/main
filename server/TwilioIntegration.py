@@ -1,8 +1,12 @@
 import json
-# import boto3
+import boto
 import os
 
-# sqs = boto3.client('sqs')
+# sqs = boto.client('sqs')
+queue = boto.sqs.connect(
+    'sqs',
+    'us-west-2',
+)
 
 QUEUE_URL = os.environ['SQS_URL']
 
@@ -24,6 +28,6 @@ def ProcessMessage(event, context):
 
     print("SMS Message: ", message)
     # TODO: Attach permissions to this lambda so it can send messages to SQS
-    # response = sqs.send_message(QueueUrl=QUEUE_URL, MessageBody=message)
+    # print(sqs.send_message(QueueUrl=QUEUE_URL, MessageBody=message))
     # print(response)
     return {'statusCode': 200}
