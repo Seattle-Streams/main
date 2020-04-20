@@ -126,3 +126,30 @@ resource "aws_sqs_queue" "sms_queue" {
     Environment = "production"
   }
 }
+
+resource "aws_sqs_queue_policy" "test" {
+  queue_url = "${aws_sqs_queue.sms_queue.id}"
+
+  policy = "${data.aws_iam_policy_document.sqs_policy}"
+}
+
+data "aws_iam_policy_document" "sqs_policy" {
+  statement {
+    sid= "First",
+    principal = "*",
+    effect = "Allow"
+
+    actions = [
+      "sqs:SendMessage",
+    ]
+    resources = ["aws_sqs_queue.sms_queue.arn"]
+    condition {
+        test = "StringEquals"
+        variable = "aws:SourceArn"
+        
+        values = [
+            "${aws_lambda_function.twilio_lambda.arn}"
+        ]
+    }
+ }
+}
