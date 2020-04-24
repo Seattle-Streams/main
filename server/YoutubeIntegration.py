@@ -1,20 +1,21 @@
 import os
 
-import google_auth_oauthlib.flow
-import googleapiclient.discovery
-import googleapiclient.errors
+#import google_auth_oauthlib.flow
+#import googleapiclient.discovery
+#import googleapiclient.errors
 
 scopes = ["https://www.googleapis.com/auth/youtube.force-ssl"]
 
 # Consuming messages from MQ & POSTING to YT Live
 
+QUEUE_URL = os.environ['SQS_URL']
 
 # Authenticate w/ YT & store token in Token Store (S3)
 def YoutubeAuth():
     # Code from: https://developers.google.com/youtube/v3/live/docs/liveChatMessages/insert?apix=true#http-request
     # Disable OAuthlib's HTTPS verification when running locally.
     # *DO NOT* leave this option enabled in production.
-    os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
+  """   os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
     api_service_name = "youtube"
     api_version = "v3"
@@ -26,7 +27,7 @@ def YoutubeAuth():
     credentials = flow.run_console()
     youtube = googleapiclient.discovery.build(
         api_service_name, api_version, credentials=credentials)
-
+ """
 # Is this necessary
 # Gets YT auth token from Token Store (S3 in our case) to send requests
 def GetStoredToken():
@@ -45,9 +46,14 @@ def ShapeMessage(body):
     return name, message
 
 # SEND POST Requests to YT Live
-def ProcessMessage():
-    badStatus = True
-    name, body = ShapeMessage(body)
+def ProcessMessage(event, context):
+    
+    # badStatus = True
+
+    print(event)
+
+
+   """  name, body = ShapeMessage(body)
     # sending POST request, inserting messages into LiveChat
     request = youtube.liveChatMessages().insert(
         part="snippet",
@@ -70,4 +76,4 @@ def ProcessMessage():
         # Message was received by Youtube therefore we can continue
     else:
         # Send message to secondary location [comment section of last live stream]
-        print("Sending messages to comment section of most recent live stream")
+        print("Sending messages to comment section of most recent live stream") """
