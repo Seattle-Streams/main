@@ -70,11 +70,6 @@ resource "aws_lambda_function" "youtube_lambda" {
   ]
 }
 
-# resource "aws_lambda_event_source_mapping" "sqs_message" {
-#   event_source_arn = "${aws_sqs_queue.sqs_queue_test.arn}"
-#   function_name    = "${aws_lambda_function.youtube_lambda.arn}"
-# }
-
 
 # This is to manage the CloudWatch Log Group for the Lambda Function.
 resource "aws_cloudwatch_log_group" "twilio_lambda_log_group" {
@@ -119,6 +114,14 @@ resource "aws_iam_policy" "lambda_sending" {
   policy = "${data.aws_iam_policy_document.lambda_send_policy.json}"
 }
 
+resource "aws_iam_policy" "lambda_receiving" {
+  name        = "lambda_receiving"
+  description = "IAM policy for lambda receiving messages from sqs"
+
+  policy = "${data.aws_iam_policy_document.lambda_receive_policy.json}"
+}
+
+# remember to decouple send and receive
 data "aws_iam_policy_document" "lambda_send_policy" {
   statement {
     effect = "Allow"
@@ -131,19 +134,47 @@ data "aws_iam_policy_document" "lambda_send_policy" {
   }
 }
 
+data "aws_iam_policy_document" "lambda_receive_policy" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "sqs:ReceiveMessage",
+      "sqs:DeleteMessage",
+      "sqs:GetQueueAttributes"
+    ]
+    resources = [
+      "${aws_sqs_queue.sms_queue.arn}"
+    ]
+  }
+}
+
 resource "aws_iam_role_policy_attachment" "lambda_send" {
   role       = "${aws_iam_role.iam_lambda_execution_role.name}"
   policy_arn = "${aws_iam_policy.lambda_sending.arn}"
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_receive" {
+  role       = "${aws_iam_role.iam_lambda_execution_role.name}"
+  policy_arn = "${aws_iam_policy.lambda_receiving.arn}"
 }
 
 resource "aws_sqs_queue" "sms_queue" {
   name                      = "sms_queue"
   delay_seconds             = 0
   max_message_size          = 2048
+  # at least 6 times the timeout of the lamda receiving messages
   message_retention_seconds = 3600
   receive_wait_time_seconds = 0
 
   tags = {
     Environment = "production"
   }
+}
+
+# https://github.com/flosell/terraform-sqs-lambda-trigger-example/blob/master/trigger.tf
+resource "aws_lambda_event_source_mapping" "sqs_message" {
+  batch_size = 1
+  event_source_arn = "${aws_sqs_queue.sms_queue.arn}"
+  function_name    = "${aws_lambda_function.youtube_lambda.arn}"
+  enabled = true
 }
