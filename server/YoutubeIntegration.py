@@ -44,11 +44,13 @@ def ShapeMessage(body):
     return name, message
 
 # SEND POST Requests to YT Live
+
+# rewrite for batch greater than 
 def ProcessMessage(event, context):
-    
+    messageBody = event['Records'][0]['body']
     # badStatus = True
 
-    print(event)
+    print(messageBody)
 
 
     """  name, body = ShapeMessage(body)
