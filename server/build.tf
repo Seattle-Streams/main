@@ -1,9 +1,8 @@
 # Jenkins EC2
 resource "aws_instance" "server" {
-  ami             = "ami-4b32be2b"
-  instance_type   = "t2.micro"
-  security_groups = ["${aws_security_group.allow_http.name}"]
-  key_name        = "${aws_key_pair.Jenkins_CI.key_name}"
+  ami           = "ami-4b32be2b"
+  instance_type = "t2.micro"
+  key_name      = "${aws_key_pair.Jenkins_CI.key_name}"
 }
 
 resource "aws_key_pair" "Jenkins_CI" {
