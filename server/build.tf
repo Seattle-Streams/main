@@ -1,6 +1,6 @@
 # Jenkins EC2
 resource "aws_instance" "server" {
-  ami             = "ami-0d6621c01e8c2de2c"
+  ami             = "ami-0d6621c01e8c2de2c" // Amazon Linux 2
   instance_type   = "t2.micro"
   key_name        = "${aws_key_pair.Jenkins_CI.key_name}"
   security_groups = ["${aws_security_group.allow_http.name}"]
@@ -16,10 +16,25 @@ resource "aws_security_group" "allow_http" {
   description = "Allow SSH and HTTP inbound traffic"
 
   ingress {
-    description = "SSH"
+    description = "Allow SSH connections"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "Allow http connections"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
