@@ -1,3 +1,5 @@
+variable "jenkins" {}
+
 # Jenkins EC2
 resource "aws_instance" "server" {
   ami             = "ami-0d6621c01e8c2de2c" // Amazon Linux 2
@@ -8,7 +10,7 @@ resource "aws_instance" "server" {
   connection {
     type        = "ssh"
     user        = "ec2-user"
-    private_key = "${file("~/.ssh/jenkins")}"
+    private_key = "${var.jenkins}"
     host        = "${self.public_ip}"
   }
 
