@@ -11,7 +11,7 @@ resource "aws_instance" "server" {
     type        = "ssh"
     user        = "ec2-user"
     private_key = var.jenkins
-    host        = "${self.public_ip}"
+    host        = self.public_ip
   }
 
   provisioner "remote-exec" {
