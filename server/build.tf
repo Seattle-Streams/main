@@ -5,7 +5,7 @@ resource "aws_instance" "server" {
   ami             = "ami-0d6621c01e8c2de2c" // Amazon Linux 2
   instance_type   = "t2.medium"
   key_name        = aws_key_pair.Jenkins_CI.key_name
-  security_groups = aws_security_group.jenkins_management.name
+  security_groups = [aws_security_group.jenkins_management.name]
 
   connection {
     type        = "ssh"
