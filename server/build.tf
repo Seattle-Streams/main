@@ -6,7 +6,7 @@ resource "aws_instance" "server" {
 }
 
 resource "aws_key_pair" "Jenkins_CI" {
-  key_name   = "Jenkins-CI-key"
+  key_name   = "jenkins"
   public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDBvuPlz12C/zqQtMz7KtY5tPyLQ19+B4+WyAB+V144zoTxXzNlvQGUauOp1Z/sOn1IDksDYuRiAez+bkrzpAG7E49s833BQbd/0oh0W6iPW7u1VGDzYRk8smxA3uRjFlkMBgoQSKqsQisSEwaoUFhtoCCqSxlFNvhY5QdXLARxk6vIwPg0mj5cMs343SiOUzA5ZPwV4Woqmb6D5fLMOMSNdW0InuNLrgzcXD27r4x5ME02F4ypBm7IqFqr6ovWcuYazoK3Fo4zHcCgxgXx3cmC5RjRzhw0GmfNVDmRY5qddcEwZHYIHZGuU4JW1i5NYNeVCFEwYNTOss5hrxbgW7Om0A5jcYlsn0GRI/HjdAOtbet7i549+xtD8rZGP22vBrjc9zBw7JG0ENniq3nDYSC3tlZoeruYmfGDgq/s6ZLiV7CSBTRNUDB5TYWRyKg6gdPhQ4lvDASRPtwv9EYeUdvVur1wgY8+Q0X0qWTr1UbzD6LPul/FJDY2ypwJ3GwhXlSv7n6PV1+S3tRxXHtfVxOMtxVsfxTW7DPxiFf+m3P/263RQ71+7qbyjPJlb9P57XBwOd89PAZQLLJu6IPqD/TCYk8TAeOWndTmeGZDR9eCI1bl9vS6BPAX07bkHlwqrKRpdUdvqHDJszRBTM2cqN0W1HHSdoyathGnJe9apvN45w=="
 }
 
