@@ -1,9 +1,27 @@
 # Jenkins EC2
 resource "aws_instance" "server" {
   ami             = "ami-0d6621c01e8c2de2c" // Amazon Linux 2
-  instance_type   = "t2.micro"
+  instance_type   = "t2.medium"
   key_name        = "${aws_key_pair.Jenkins_CI.key_name}"
   security_groups = ["${aws_security_group.allow_http.name}"]
+
+  connection {
+    type        = "ssh"
+    user        = "ec2-user"
+    private_key = "${file("~/.ssh/jenkins")}"
+    host        = "${self.public_ip}"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo yum update",
+      "sudo yum install java-1.8.0 --y",
+      "sudo wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins.io/redhat/jenkins.repo",
+      "sudo rpm --import http://pkg.jenkins.io/redhat/jenkins.io.key",
+      "sudo yum install jenkins --y",
+      "sudo service jenkins start"
+    ]
+  }
 }
 
 resource "aws_key_pair" "Jenkins_CI" {
