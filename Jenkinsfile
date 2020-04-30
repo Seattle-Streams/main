@@ -16,7 +16,6 @@ pipeline {
             steps {
                 dir("TwilioIntegration") {
                     sh 'mkdir ./dependencies'
-                    sh 'python -m ensurepip --default-pip'
                     sh 'pip install boto3 -t ./dependencies'
                 }
             }
@@ -27,7 +26,10 @@ pipeline {
                 dir("TwilioIntegration") {
                     sh 'pwd'
                     sh 'ls'
-                    sh 'build.sh'
+                    dir("dependencies") {
+                        sh 'zip -r9 "./../twilio_lambda.zip" .'
+                    }
+                    sh 'zip -g twilio_lambda.zip TwilioIntegration.py'
                     sh "zip ${commitID()}.zip main"
                 }
             }    
