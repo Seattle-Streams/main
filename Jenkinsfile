@@ -14,7 +14,7 @@ pipeline {
 
         stage('Test'){
             steps {
-                sh 'cd ./TwilioIntegration'
+                sh 'cd TwilioIntegration'
                 sh 'mkdir ./dependencies'
                 sh 'python -m ensurepip --default-pip'
                 sh 'pip install boto3 -t ./dependencies'
@@ -23,9 +23,9 @@ pipeline {
 
         stage('Build'){
             steps {
-                sh 'cd ./TwilioIntegration'
+                sh 'cd TwilioIntegration'
                 sh 'ls'
-                sh './build.sh'
+                sh 'build.sh'
                 sh "zip ${commitID()}.zip main"
             }    
         }
