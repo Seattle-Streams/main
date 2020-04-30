@@ -1,6 +1,3 @@
-# Simple AWS Lambda Terraform Example
-# to deploy: run `terraform apply`
-# to destroy: run `terraform destroy`
 variable "runtime" {}
 variable "timeout" {}
 
@@ -48,6 +45,9 @@ resource "aws_lambda_function" "twilio_lambda" {
 
   filename = "twilio_lambda.zip"
   #   source_code_hash = "${data.archive_file.twilio_zip.output_base64sha256}"
+  #   source_code_hash = filebase64sha256("twilio_lambda.zip")
+  #   s3_bucket = "process-messages-builds"
+  #   s3_key    = "twilio_lambda.zip"
 
   role    = "${aws_iam_role.iam_lambda_execution_role.arn}"
   handler = "TwilioIntegration.ProcessMessage"
@@ -78,6 +78,10 @@ resource "aws_lambda_function" "youtube_lambda" {
   ]
 }
 
+
+####################################################################################################
+##########################         Lambda Policies         #########################################
+####################################################################################################
 
 # This is to manage the CloudWatch Log Group for the Lambda Function.
 resource "aws_cloudwatch_log_group" "twilio_lambda_log_group" {
@@ -166,10 +170,28 @@ resource "aws_iam_role_policy_attachment" "lambda_receive" {
   policy_arn = "${aws_iam_policy.lambda_receiving.arn}"
 }
 
+####################################################################################################
+##########################          S3 Resources           #########################################
+####################################################################################################
+
+resource "aws_s3_bucket" "process-messages-builds" {
+  bucket = "process-messages-builds"
+  acl    = "private"
+
+  tags = {
+    Name        = "process-messages-builds"
+    Environment = "Prod"
+  }
+}
+
+####################################################################################################
+##########################          SQS Resources          #########################################
+####################################################################################################
+
 resource "aws_sqs_queue" "sms_queue" {
-  name                      = "sms_queue"
-  delay_seconds             = 0
-  max_message_size          = 2048
+  name             = "sms_queue"
+  delay_seconds    = 0
+  max_message_size = 2048
   # at least 6 times the timeout of the lamda receiving messages
   message_retention_seconds = 3600
   receive_wait_time_seconds = 0
@@ -181,8 +203,8 @@ resource "aws_sqs_queue" "sms_queue" {
 
 # https://github.com/flosell/terraform-sqs-lambda-trigger-example/blob/master/trigger.tf
 resource "aws_lambda_event_source_mapping" "sqs_message" {
-  batch_size = 1
+  batch_size       = 1
   event_source_arn = "${aws_sqs_queue.sms_queue.arn}"
   function_name    = "${aws_lambda_function.youtube_lambda.arn}"
-  enabled = true
+  enabled          = true
 }

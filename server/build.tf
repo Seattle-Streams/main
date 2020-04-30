@@ -1,9 +1,29 @@
+variable "jenkins" {}
+
 # Jenkins EC2
 resource "aws_instance" "server" {
   ami             = "ami-0d6621c01e8c2de2c" // Amazon Linux 2
-  instance_type   = "t2.micro"
-  key_name        = "${aws_key_pair.Jenkins_CI.key_name}"
-  security_groups = ["${aws_security_group.allow_http.name}"]
+  instance_type   = "t2.medium"
+  key_name        = aws_key_pair.Jenkins_CI.key_name
+  security_groups = [aws_security_group.jenkins_management.name]
+
+  connection {
+    type        = "ssh"
+    user        = "ec2-user"
+    private_key = var.jenkins
+    host        = self.public_ip
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo yum -y update",
+      "sudo yum -y install git-all",
+      "sudo yum -y install java-1.8.0",
+      "sudo wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins.io/redhat/jenkins.repo",
+      "sudo rpm --import http://pkg.jenkins.io/redhat/jenkins.io.key",
+      "sudo yum -y install jenkins",
+    ]
+  }
 }
 
 resource "aws_key_pair" "Jenkins_CI" {
@@ -11,8 +31,8 @@ resource "aws_key_pair" "Jenkins_CI" {
   public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDBvuPlz12C/zqQtMz7KtY5tPyLQ19+B4+WyAB+V144zoTxXzNlvQGUauOp1Z/sOn1IDksDYuRiAez+bkrzpAG7E49s833BQbd/0oh0W6iPW7u1VGDzYRk8smxA3uRjFlkMBgoQSKqsQisSEwaoUFhtoCCqSxlFNvhY5QdXLARxk6vIwPg0mj5cMs343SiOUzA5ZPwV4Woqmb6D5fLMOMSNdW0InuNLrgzcXD27r4x5ME02F4ypBm7IqFqr6ovWcuYazoK3Fo4zHcCgxgXx3cmC5RjRzhw0GmfNVDmRY5qddcEwZHYIHZGuU4JW1i5NYNeVCFEwYNTOss5hrxbgW7Om0A5jcYlsn0GRI/HjdAOtbet7i549+xtD8rZGP22vBrjc9zBw7JG0ENniq3nDYSC3tlZoeruYmfGDgq/s6ZLiV7CSBTRNUDB5TYWRyKg6gdPhQ4lvDASRPtwv9EYeUdvVur1wgY8+Q0X0qWTr1UbzD6LPul/FJDY2ypwJ3GwhXlSv7n6PV1+S3tRxXHtfVxOMtxVsfxTW7DPxiFf+m3P/263RQ71+7qbyjPJlb9P57XBwOd89PAZQLLJu6IPqD/TCYk8TAeOWndTmeGZDR9eCI1bl9vS6BPAX07bkHlwqrKRpdUdvqHDJszRBTM2cqN0W1HHSdoyathGnJe9apvN45w=="
 }
 
-resource "aws_security_group" "allow_http" {
-  name        = "allow_http"
+resource "aws_security_group" "jenkins_management" {
+  name        = "jenkins_management"
   description = "Allow SSH and HTTP inbound traffic"
 
   ingress {
