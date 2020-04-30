@@ -14,36 +14,42 @@ pipeline {
 
         stage('Test'){
             steps {
-                sh 'cd TwilioIntegration'
-                sh 'mkdir ./dependencies'
-                sh 'python -m ensurepip --default-pip'
-                sh 'pip install boto3 -t ./dependencies'
+                dir("TwilioIntegration") {
+                    sh 'mkdir ./dependencies'
+                    sh 'python -m ensurepip --default-pip'
+                    sh 'pip install boto3 -t ./dependencies'
+                }
             }
         }
 
         stage('Build'){
             steps {
-                sh 'cd TwilioIntegration'
-                sh 'ls'
-                sh 'build.sh'
-                sh "zip ${commitID()}.zip main"
+                dir("TwilioIntegration") {
+                    sh 'pwd'
+                    sh 'ls'
+                    sh 'build.sh'
+                    sh "zip ${commitID()}.zip main"
+                }
             }    
         }
 
         stage('Push'){
             steps {
-                sh 'cd ./TwilioIntegration'
-                sh "aws s3 cp ${commitID()}.zip s3://${bucket}"
+                dir("TwilioIntegration") {
+                    sh 'cd ./TwilioIntegration'
+                    sh "aws s3 cp ${commitID()}.zip s3://${bucket}"
+                }
             }
         }
 
         stage('Deploy'){
             steps {
-                sh 'cd ./TwilioIntegration'
-                sh "aws lambda update-function-code --function-name ${functionName} \
-                        --s3-bucket ${bucket} \
-                        --s3-key ${commitID()}.zip \
-                        --region ${region}"
+                dir("TwilioIntegration") {
+                    sh "aws lambda update-function-code --function-name ${functionName} \
+                            --s3-bucket ${bucket} \
+                            --s3-key ${commitID()}.zip \
+                            --region ${region}"
+                }
             }
         }
     }
