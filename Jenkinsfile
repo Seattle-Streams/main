@@ -15,7 +15,7 @@ pipeline {
             steps {
                 sh 'cd ./TwilioIntegration'
                 sh 'mkdir ./dependencies'
-                sh 'sudo python -m ensurepip --default-pip'
+                sh 'python -m ensurepip --default-pip'
                 sh 'pip install boto3 -t ./dependencies'
             }
         }
