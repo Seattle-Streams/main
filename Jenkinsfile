@@ -24,7 +24,8 @@ pipeline {
         stage('Build'){
             steps {
                 sh 'cd ./TwilioIntegration'
-                sh './build'
+                sh 'ls'
+                sh './build.sh'
                 sh "zip ${commitID()}.zip main"
             }    
         }
