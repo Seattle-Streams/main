@@ -16,6 +16,14 @@ data "archive_file" "youtube_zip" {
   output_path = "youtube_function.zip"
 }
 
+
+# forpreparing pythin archives for AWS lambda
+# module "lambda_python_archive" {
+#   src_dir = "youtubeIntegration"
+#   output_path = "youtube_function.zip"
+# }
+
+
 data "aws_iam_policy_document" "lambda_policy" {
   statement {
     effect = "Allow"
