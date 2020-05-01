@@ -1,21 +1,21 @@
 #!/usr/bin/env bash
 
-mkdir dependencies
+mkdir -p dependencies
 pip install boto3 -t ./dependencies
 cd dependencies
-zip -r9 "./../twilio_lambda.zip" .
+zip -r9 "./../$1.zip" .
 cd -
-zip -g twilio_lambda.zip TwilioIntegration.py
+zip -g $1.zip $2.py
 
 echo "-------------------------------------"
 echo "   Uploading lambda function to S3"
 echo "-------------------------------------"
 
-aws s3 cp twilio_lambda.zip s3://process-messages-builds
+aws s3 cp $1.zip s3://process-messages-builds
 
-aws lambda update-function-code --function-name twilio_lambda \
+aws lambda update-function-code --function-name $1 \
 --s3-bucket process-messages-builds \
---s3-key twilio_lambda.zip \
+--s3-key $1.zip \
 --region us-west-2
 
 echo "---------------------"
@@ -23,4 +23,4 @@ echo "   Upload Complete"
 echo "---------------------"
 
 rm -rf dependencies
-rm twilio_lambda.zip
+rm $1.zip
