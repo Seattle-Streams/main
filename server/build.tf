@@ -82,7 +82,7 @@ resource "aws_iam_role" "worker_role" {
   assume_role_policy = "${data.aws_iam_policy.worker_execution.json}"
 }
 
-data "aws_iam_policy" "worker_execution" {
+data "aws_iam_policy_document" "worker_execution" {
   statement {
     effect = "Allow"
 
@@ -118,7 +118,7 @@ resource "aws_iam_policy" "lambda_policy" {
   name = "DeployLambdaPolicy"
   path = "/"
 
-  policy = "${data.aws_iam_policy.update_lambda.json}"
+  policy = "${data.aws_iam_policy_document.update_lambda.json}"
 }
 
 data "aws_iam_policy_document" "update_lambda" {
