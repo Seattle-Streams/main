@@ -130,6 +130,15 @@ resource "aws_iam_policy" "lambda_receiving" {
   policy = "${data.aws_iam_policy_document.lambda_receive_policy.json}"
 }
 
+resource "aws_iam_policy" "lambda_reading_s3" {
+  name        = "lambda_reading_s3"
+  description = "IAM policy for lambda reading files from s3"
+
+  policy = "${data.aws_iam_policy_document.lambda_read_s3_policy.json}"
+}
+
+
+
 # remember to decouple send and receive
 data "aws_iam_policy_document" "lambda_send_policy" {
   statement {
@@ -157,6 +166,18 @@ data "aws_iam_policy_document" "lambda_receive_policy" {
   }
 }
 
+data "aws_iam_policy_document" "lambda_read_s3_policy" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "s3:GetObject"
+    ]
+    resources = ["${aws_s3_bucket.process-messages-builds.arn}/*", ]
+  }
+}
+
+
 resource "aws_iam_role_policy_attachment" "lambda_send" {
   role       = "${aws_iam_role.iam_lambda_execution_role.name}"
   policy_arn = "${aws_iam_policy.lambda_sending.arn}"
@@ -166,6 +187,13 @@ resource "aws_iam_role_policy_attachment" "lambda_receive" {
   role       = "${aws_iam_role.iam_lambda_execution_role.name}"
   policy_arn = "${aws_iam_policy.lambda_receiving.arn}"
 }
+
+resource "aws_iam_role_policy_attachment" "lambda_read_s3" {
+  role       = "${aws_iam_role.iam_lambda_execution_role.name}"
+  policy_arn = "${aws_iam_policy.lambda_reading_s3.arn}"
+}
+
+
 
 ####################################################################################################
 ##########################          S3 Resources           #########################################

@@ -5,6 +5,10 @@ mkdir -p dependencies
 # YOU NEED TO ADD DEPENDEDENCIES HERE (see twilio/build.sh for example)
 # i.e. pip install boto3 -t ./dependencies
 
+pip install boto3 -t ./dependencies
+pip install google-api-python-client -t ./dependencies
+pip install oauth2client -t ./dependencies
+
 cd dependencies
 zip -r9 "./../$1.zip" .
 cd -

@@ -2,6 +2,7 @@
 
 import os
 import httplib2
+import boto3
 
 from googleapiclient import discovery
 from oauth2client import client
@@ -12,15 +13,17 @@ import googleapiclient.errors
 SCOPES = ["https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtube.readonly"]
 API_SERVICE_NAME = "youtube"
 API_VERSION = "v3"
-CLIENT_SECRET_FILE = "client_secret.json"
+# CLIENT_SECRET_FILE = "client_secret.json"
 CREDENTIAL_FILE = "credentials.json"
 # AUTH_CODE = ""
 # Remember to verify authenticity of auth code!
 # https://developers.google.com/identity/sign-in/web/backend-auth
 # use verify_oauth2_token 
 
-MESSAGE = "Hello World!!"
+# MESSAGE = "Hello World!!"
 
+s3 = boto3.resource('s3')
+BUCKET_NAME = 'process-messages-builds'
 
 # getLiveChatID gets the liveChatID of the currently streaming broadcast
 def getLiveChatID(youtubeObject) -> str:
@@ -55,7 +58,13 @@ def postMessage(youtubeObject, liveChatID, message) -> str:
 
 # for now, gets credentials if they exist, or breaks
 def getStoredCredentials():
-    store = Storage(CREDENTIAL_FILE)
+    
+    # pull credentials from S3    
+    local_file_name = "/tmp/" + CREDENTIAL_FILE
+    s3.Bucket(BUCKET_NAME).download_file(CREDENTIAL_FILE, local_file_name)
+    
+    store = Storage(local_file_name)
+    
     credentials = store.locked_get()
     # if not credentials or credentials.invalid:
 
@@ -109,10 +118,11 @@ def auth():
 
     return youtubeService
 
-def main():
+def ProcessMessage(event, context):
+    message = event["body"]
+
     youtubeObject = auth()
     liveChatID = getLiveChatID(youtubeObject)
-    response = postMessage(youtubeObject, liveChatID, MESSAGE)
-    print(response)
-
-main()
+    response = postMessage(youtubeObject, liveChatID, message)
+    print('Logging YouTube response', response)
+    return {'statusCode': 200}
