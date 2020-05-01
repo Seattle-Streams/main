@@ -40,15 +40,15 @@ pipeline {
             }
         }
 
-        // stage('Deploy'){
-        //     steps {
-        //         dir("server/twilio") {
-        //             sh "aws lambda update-function-code --function-name ${functionName} \
-        //                     --s3-bucket ${bucket} \
-        //                     --s3-key ${functionName}.zip \
-        //                     --region ${region}"
-        //         }
-        //     }
-        // }
+        stage('Deploy'){
+            steps {
+                dir("server/twilio") {
+                    sh "aws lambda update-function-code --function-name ${functionName} \
+                            --s3-bucket ${bucket} \
+                            --s3-key ${functionName}.zip \
+                            --region ${region}"
+                }
+            }
+        }
     }
 }
