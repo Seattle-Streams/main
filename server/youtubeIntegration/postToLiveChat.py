@@ -19,7 +19,7 @@ AUTH_CODE = "4/zQEQi7crmwNErtn9Ob2J-zADuvq0PjDGrbps3oXSPWq3N78EOjP5YL_ZgdIh8e6Ts
 # https://developers.google.com/identity/sign-in/web/backend-auth
 # use verify_oauth2_token 
 
-MESSAGE = "Hello World!"
+MESSAGE = "Hello World!!"
 
 
 # getLiveChatID gets the liveChatID of the currently streaming broadcast
@@ -101,8 +101,9 @@ def auth():
     httpAuth = credentials.authorize(httplib2.Http())
 
     if credentials.access_token_expired:
-        credentials.refresh()
+        credentials.refresh(httplib2.Http())
         httpAuth = credentials.authorize(httplib2.Http())
+        
 
     youtubeService = discovery.build(
         API_SERVICE_NAME, API_VERSION, http=httpAuth)
