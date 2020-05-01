@@ -1,4 +1,4 @@
-def bucket = 'lamdba_builds'
+def bucket = 'process-messages-builds'
 def functionName = 'twilio_lambda'
 def region = 'us-west-2'
 
@@ -14,7 +14,7 @@ pipeline {
 
         stage('Test'){
             steps {
-                dir("TwilioIntegration") {
+                dir("server/twilio") {
                     sh 'mkdir ./dependencies'
                     sh 'pip install boto3 -t ./dependencies'
                 }
@@ -23,43 +23,32 @@ pipeline {
 
         stage('Build'){
             steps {
-                dir("TwilioIntegration") {
-                    sh 'pwd'
-                    sh 'ls'
+                dir("server/twilio") {
                     dir("dependencies") {
                         sh 'zip -r9 "./../twilio_lambda.zip" .'
                     }
-                    sh 'zip -g twilio_lambda.zip TwilioIntegration.py'
-                    sh "zip ${commitID()}.zip main"
+                    sh "zip -g ${functionName}.zip TwilioIntegration.py"
                 }
             }    
         }
 
         stage('Push'){
             steps {
-                dir("TwilioIntegration") {
-                    sh 'cd ./TwilioIntegration'
-                    sh "aws s3 cp ${commitID()}.zip s3://${bucket}"
+                dir("server/twilio") {
+                    sh "aws s3 cp ${functionName}.zip s3://${bucket}"
                 }
             }
         }
 
-        stage('Deploy'){
-            steps {
-                dir("TwilioIntegration") {
-                    sh "aws lambda update-function-code --function-name ${functionName} \
-                            --s3-bucket ${bucket} \
-                            --s3-key ${commitID()}.zip \
-                            --region ${region}"
-                }
-            }
-        }
+        // stage('Deploy'){
+        //     steps {
+        //         dir("server/twilio") {
+        //             sh "aws lambda update-function-code --function-name ${functionName} \
+        //                     --s3-bucket ${bucket} \
+        //                     --s3-key ${functionName}.zip \
+        //                     --region ${region}"
+        //         }
+        //     }
+        // }
     }
-}
-
-def commitID() {
-    sh 'git rev-parse HEAD > .git/commitID'
-    def commitID = readFile('.git/commitID').trim()
-    sh 'rm .git/commitID'
-    commitID
 }
