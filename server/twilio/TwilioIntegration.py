@@ -15,6 +15,7 @@ def ShapeMessage(message):
     return message
 
 
+# ProcessMessage extracts the sms message from the request and sends it to an SQS Queue
 def ProcessMessage(event, context):
     message = ShapeMessage(event['body'])
 
