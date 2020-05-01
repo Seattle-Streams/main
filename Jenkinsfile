@@ -27,7 +27,7 @@ pipeline {
                     dir("dependencies") {
                         sh 'zip -r9 "./../twilio_lambda.zip" .'
                     }
-                    sh "zip -g ${functionName}.zip TwilioIntegration.py"
+                    sh "zip -g ${functionName}.zip Integration.py"
                 }
             }    
         }
