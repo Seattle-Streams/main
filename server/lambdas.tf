@@ -43,11 +43,8 @@ resource "aws_iam_role" "iam_lambda_execution_role" {
 resource "aws_lambda_function" "twilio_lambda" {
   function_name = "twilio_lambda"
 
-  filename = "twilio_lambda.zip"
-  #   source_code_hash = "${data.archive_file.twilio_zip.output_base64sha256}"
-  #   source_code_hash = filebase64sha256("twilio_lambda.zip")
-  #   s3_bucket = "process-messages-builds"
-  #   s3_key    = "twilio_lambda.zip"
+  s3_bucket = "process-messages-builds"
+  s3_key    = "twilio_lambda.zip"
 
   role    = "${aws_iam_role.iam_lambda_execution_role.arn}"
   handler = "TwilioIntegration.ProcessMessage"
@@ -66,8 +63,8 @@ resource "aws_lambda_function" "twilio_lambda" {
 resource "aws_lambda_function" "youtube_lambda" {
   function_name = "youtube_lambda"
 
-  filename         = "${data.archive_file.youtube_zip.output_path}"
-  source_code_hash = "${data.archive_file.youtube_zip.output_base64sha256}"
+  s3_bucket = "process-messages-builds"
+  s3_key    = "youtube_lambda.zip"
 
   role    = "${aws_iam_role.iam_lambda_execution_role.arn}"
   handler = "YoutubeIntegration.ProcessMessage"
