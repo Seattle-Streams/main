@@ -2,11 +2,11 @@ variable "jenkins" {}
 
 # Jenkins EC2
 resource "aws_instance" "server" {
-  ami             = "ami-0d6621c01e8c2de2c" // Amazon Linux 2
-  instance_type   = "t2.medium"
-  key_name        = "${aws_key_pair.Jenkins_CI.key_name}"
-  security_groups = ["${aws_security_group.jenkins_management.name}"]
-  role            = "${aws_iam_role.worker_role.arn}"
+  ami                  = "ami-0d6621c01e8c2de2c" // Amazon Linux 2
+  instance_type        = "t2.medium"
+  key_name             = "${aws_key_pair.Jenkins_CI.key_name}"
+  security_groups      = ["${aws_security_group.jenkins_management.name}"]
+  iam_instance_profile = "${aws_iam_instance_profile.worker_profile.name}"
 
   connection {
     type        = "ssh"
@@ -69,17 +69,18 @@ resource "aws_security_group" "jenkins_management" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+
 // Jenkins slave instance profile
-# resource "aws_iam_instance_profile" "worker_profile" {
-#   name = "JenkinsWorkerProfile"
-#   role = "${aws_iam_role.worker_role.name}"
-# }
+resource "aws_iam_instance_profile" "worker_profile" {
+  name = "JenkinsWorkerProfile"
+  role = "${aws_iam_role.worker_role.name}"
+}
 
 resource "aws_iam_role" "worker_role" {
   name = "JenkinsBuildRole"
   path = "/"
 
-  assume_role_policy = "${data.aws_iam_policy.worker_execution.json}"
+  assume_role_policy = "${data.aws_iam_policy_document.worker_execution.json}"
 }
 
 data "aws_iam_policy_document" "worker_execution" {
