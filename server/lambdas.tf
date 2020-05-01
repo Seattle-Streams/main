@@ -40,7 +40,7 @@ resource "aws_lambda_function" "twilio_lambda" {
   s3_key    = "twilio_lambda.zip"
 
   role    = "${aws_iam_role.iam_lambda_execution_role.arn}"
-  handler = "TwilioIntegration.ProcessMessage"
+  handler = "Integration.ProcessMessage"
   runtime = "${var.runtime}"
   timeout = "${var.timeout}"
   environment {

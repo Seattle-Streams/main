@@ -16,12 +16,9 @@ def ShapeMessage(message):
 
 
 def ProcessMessage(event, context):
-    # The context of the text message from Twilio
-    # print(event['body'])
     message = ShapeMessage(event['body'])
 
-    print("SMS Message: ", message)
-    # TODO: Attach permissions to this lambda so it can send messages to SQS
+    print("Logging SMS Message: ", message)
     response = sqs.send_message(QueueUrl=QUEUE_URL, MessageBody=message)
-    print("SQS Response: ", response)
+    print("Logging SQS Response: ", response)
     return {'statusCode': 200}
