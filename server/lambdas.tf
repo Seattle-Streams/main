@@ -55,8 +55,9 @@ resource "aws_lambda_function" "twilio_lambda" {
 resource "aws_lambda_function" "youtube_lambda" {
   function_name = "youtube_lambda"
 
-  s3_bucket = "process-messages-builds"
-  s3_key    = "youtube_lambda.zip"
+  filename = "youtube_lambda.zip"
+  #   s3_bucket = "process-messages-builds"
+  #   s3_key    = "youtube_lambda.zip"
 
   role    = "${aws_iam_role.iam_lambda_execution_role.arn}"
   handler = "YoutubeIntegration.ProcessMessage"
