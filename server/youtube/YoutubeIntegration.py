@@ -1,4 +1,4 @@
-# v1.8
+# v1.9
 # TODO: Determine whether we should be using oauth2client (deprecated) or a different library
 
 import os
@@ -23,7 +23,7 @@ CREDENTIAL_FILE = "credentials.json"
 
 # MESSAGE = "Hello World!!"
 
-s3 = boto3.resource('s3')
+s3 = boto3.client('s3')
 BUCKET_NAME = 'process-messages-builds'
 
 # getLiveChatID gets the liveChatID of the currently streaming broadcast
@@ -62,7 +62,7 @@ def getStoredCredentials():
     
     # pull credentials from S3    
     local_file_name = "/tmp/" + CREDENTIAL_FILE
-    s3.Bucket(BUCKET_NAME).download_file(CREDENTIAL_FILE, local_file_name)
+    s3.download_file(BUCKET_NAME, CREDENTIAL_FILE, local_file_name)
     
     store = Storage(local_file_name)
     
