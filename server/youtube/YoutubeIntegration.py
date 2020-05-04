@@ -1,4 +1,4 @@
-# v1.9
+# v1.10
 # TODO: Determine whether we should be using oauth2client (deprecated) or a different library
 
 import os
@@ -118,7 +118,7 @@ def auth():
         httpAuth = credentials.authorize(httplib2.Http())
 
     youtubeService = discovery.build(
-        API_SERVICE_NAME, API_VERSION, http=httpAuth)
+        API_SERVICE_NAME, API_VERSION, http=httpAuth, cache_discovery=False)
 
     return youtubeService
 
