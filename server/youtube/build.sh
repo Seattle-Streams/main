@@ -2,10 +2,10 @@
 
 mkdir -p dependencies
 
-pip3 install boto3 -t ./dependencies
-pip3 install httplib2 -t ./dependencies
-pip3 install google-api-python-client -t ./dependencies
-pip3 install oauth2client -t ./dependencies
+pip3 install boto3 -tq ./dependencies
+pip3 install httplib2 -tq ./dependencies
+pip3 install google-api-python-client -tq ./dependencies
+pip3 install oauth2client -tq ./dependencies
 
 cd dependencies
 zip -r9 "./../$1.zip" .

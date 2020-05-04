@@ -1,19 +1,6 @@
 variable "runtime" {}
 variable "timeout" {}
 
-# data "archive_file" "twilio_zip" {
-#   type        = "zip"
-#   output_path = "twilio_function.zip"
-#   source_file = "TwilioIntegration.py"
-# }
-
-data "archive_file" "youtube_zip" {
-  type        = "zip"
-  source_file = "YoutubeIntegration.py"
-  output_path = "youtube_function.zip"
-}
-
-
 # forpreparing pythin archives for AWS lambda
 # module "lambda_python_archive" {
 #   src_dir = "youtubeIntegration"
@@ -70,6 +57,13 @@ resource "aws_lambda_function" "youtube_lambda" {
   handler = "YoutubeIntegration.ProcessMessage"
   runtime = "${var.runtime}"
   timeout = "${var.timeout}"
+
+  environment {
+    variables = {
+      BUCKET_NAME = "${aws_s3_bucket.process-messages-builds.id}"
+    }
+  }
+
   depends_on = [
     "aws_iam_role_policy_attachment.lambda_logs",
   ]
@@ -167,7 +161,7 @@ data "aws_iam_policy_document" "lambda_receive_policy" {
 }
 
 data "aws_iam_policy_document" "lambda_access_s3_policy" {
-  
+
   statement {
     effect = "Allow"
 
@@ -177,7 +171,7 @@ data "aws_iam_policy_document" "lambda_access_s3_policy" {
     ]
     resources = ["*"]
   }
-  
+
   statement {
     effect = "Allow"
 

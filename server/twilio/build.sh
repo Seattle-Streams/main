@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 mkdir -p dependencies
-pip install boto3 -t ./dependencies
+pip install boto3 -tq ./dependencies
 cd dependencies
 zip -r9 "./../$1.zip" .
 cd -
