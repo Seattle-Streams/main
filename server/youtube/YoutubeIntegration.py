@@ -1,4 +1,4 @@
-# v1.7
+# v1.8
 # TODO: Determine whether we should be using oauth2client (deprecated) or a different library
 
 import os

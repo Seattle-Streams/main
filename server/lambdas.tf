@@ -130,11 +130,11 @@ resource "aws_iam_policy" "lambda_receiving" {
   policy = "${data.aws_iam_policy_document.lambda_receive_policy.json}"
 }
 
-resource "aws_iam_policy" "lambda_reading_s3" {
-  name        = "lambda_reading_s3"
+resource "aws_iam_policy" "lambda_accessing_s3" {
+  name        = "lambda_accessing_s3"
   description = "IAM policy for lambda reading files from s3"
 
-  policy = "${data.aws_iam_policy_document.lambda_read_s3_policy.json}"
+  policy = "${data.aws_iam_policy_document.lambda_access_s3_policy.json}"
 }
 
 
@@ -166,17 +166,28 @@ data "aws_iam_policy_document" "lambda_receive_policy" {
   }
 }
 
-data "aws_iam_policy_document" "lambda_read_s3_policy" {
+data "aws_iam_policy_document" "lambda_access_s3_policy" {
+  
   statement {
     effect = "Allow"
 
     actions = [
-      "s3:GetObject"
+      "s3:ListAllMyBuckets",
+      "s3:GetBucketLocation"
+    ]
+    resources = ["*"]
+  }
+  
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "s3:*"
     ]
     resources = ["${aws_s3_bucket.process-messages-builds.arn}/*", ]
   }
-}
 
+}
 
 resource "aws_iam_role_policy_attachment" "lambda_send" {
   role       = "${aws_iam_role.iam_lambda_execution_role.name}"
@@ -188,9 +199,9 @@ resource "aws_iam_role_policy_attachment" "lambda_receive" {
   policy_arn = "${aws_iam_policy.lambda_receiving.arn}"
 }
 
-resource "aws_iam_role_policy_attachment" "lambda_read_s3" {
+resource "aws_iam_role_policy_attachment" "lambda_access_s3" {
   role       = "${aws_iam_role.iam_lambda_execution_role.name}"
-  policy_arn = "${aws_iam_policy.lambda_reading_s3.arn}"
+  policy_arn = "${aws_iam_policy.lambda_accessing_s3.arn}"
 }
 
 
