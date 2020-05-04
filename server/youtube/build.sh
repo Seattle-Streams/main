@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-# installing software in buildscript because I don't have ssh key
-sudo apt install python3-pip
-
 mkdir -p dependencies
 
 pip install boto3 -t ./dependencies
