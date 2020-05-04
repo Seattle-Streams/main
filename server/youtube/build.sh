@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
 
+rm -rf dependencies
+rm $1.zip
 mkdir -p dependencies
 
-pip3 install boto3 -tq ./dependencies
-pip3 install httplib2 -tq ./dependencies
-pip3 install google-api-python-client -tq ./dependencies
-pip3 install oauth2client -tq ./dependencies
+pip3 install boto3 -q -t ./dependencies
+pip3 install httplib2 -q -t ./dependencies
+pip3 install google-api-python-client -q -t ./dependencies
+pip3 install oauth2client -q -t ./dependencies
 
 cd dependencies
 zip -r9 "./../$1.zip" .
@@ -26,6 +28,3 @@ aws lambda update-function-code --function-name $1 \
 echo "---------------------"
 echo "   Upload Complete"
 echo "---------------------"
-
-rm -rf dependencies
-rm $1.zip

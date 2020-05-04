@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 
+rm -rf dependencies
+rm $1.zip
 mkdir -p dependencies
-pip install boto3 -tq ./dependencies
+
+pip install boto3 -q -t ./dependencies
+
 cd dependencies
 zip -r9 "./../$1.zip" .
 cd -
@@ -21,6 +25,3 @@ aws lambda update-function-code --function-name $1 \
 echo "---------------------"
 echo "   Upload Complete"
 echo "---------------------"
-
-rm -rf dependencies
-rm $1.zip
