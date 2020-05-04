@@ -3,6 +3,7 @@
 mkdir -p dependencies
 
 pip install boto3 -t ./dependencies
+pip install h22plib2 -t ./dependencies
 pip3 install google-api-python-client -t ./dependencies
 pip3 install oauth2client -t ./dependencies
 
