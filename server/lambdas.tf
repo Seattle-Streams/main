@@ -48,7 +48,7 @@ resource "aws_lambda_function" "twilio_lambda" {
 }
 
 resource "aws_lambda_function" "youtube_lambda" {
-  function_name = "youtube_integration"
+  function_name = "youtube_lambda"
 
   s3_bucket = "process-messages-builds"
   s3_key    = "youtube/Integration.zip"
