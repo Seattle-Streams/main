@@ -2,7 +2,7 @@
 function package () {
     cd server/$1
     rm -rf dependencies
-    rm Integration.zip
+    rm -f Integration.zip
     mkdir -p dependencies
 
     pip3 install -r requirements.txt -t ./dependencies
@@ -19,7 +19,7 @@ function deploy () {
     echo "   Uploading latest lambda function build to S3"
     echo "--------------------------------------------------"
 
-    aws s3 cp Integration.zip s3://process-messages-builds/$2
+    aws s3 cp Integration.zip s3://process-messages-builds/$2/
     
     echo "-------------------------------------------"
     echo "   Pointing lambda function to new build"
@@ -30,7 +30,6 @@ function deploy () {
     --s3-key $2/Integration.zip \
     --region us-west-2
 
-    rm -f Integration.zip
     cd ../..
 }
 
