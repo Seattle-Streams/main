@@ -57,7 +57,7 @@ else
     if [ $build_twilio -eq 1 ];
     then
         package twilio
-        deploy twilio_integration twilio
+        deploy twilio_lambda twilio
     fi
 
     if [ $build_youtube -eq 1 ];
