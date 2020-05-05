@@ -1,13 +1,13 @@
 # Installs necessary dependencies and zips them with integration code
 function package () {
     cd server/$1
-    rm -rf packages
+    rm -rf dependencies
     rm Integration.zip
-    mkdir -p packages
+    mkdir -p dependencies
 
-    pip3 install -r requirements.txt -t ./packages
+    pip3 install -r requirements.txt -t ./dependencies
 
-    cd packages
+    cd dependencies
     zip -r9 "./../Integration.zip" .
     cd -
     zip -g Integration.zip Integration.py
@@ -32,36 +32,35 @@ function deploy () {
     cd ../..
 }
 
-git diff --name-only $GIT_PREVIOUS_COMMIT $GIT_COMMIT | grep -i 'Integration\|requirements' > lambdaChanges
-
-if [ -s "$lambdaChanges" ];
+# If there are changes to Integrations or dependencies, we need to build
+if ! git diff --name-only $GIT_PREVIOUS_COMMIT $GIT_COMMIT | grep -i 'Integration\|requirements' > lambdaChanges
 then
-    echo "No changes... skipping build"
-    exit
-fi
+  echo "No changes... skipping build"    
+else
 
-build_twilio=0
-build_youtube=0
-while read -r line;
-do
-    if [ "${line#*/}" == 'twilio/Integration.py' ] || [ "${line#*/}" == 'twilio/requirements.txt' ];
+    build_twilio=0
+    build_youtube=0
+    while read -r line;
+    do
+        if [ "${line#*/}" == 'twilio/Integration.py' ] || [ "${line#*/}" == 'twilio/requirements.txt' ];
+        then
+            build_twilio=1
+        fi
+        if [ "${line##*/}" == 'YoutubeIntegration.py' ] || [ "${line#*/}" == 'youtube/requirements.txt' ];
+        then
+            build_youtube=1
+        fi
+    done < lambdaChanges
+
+    if [ $build_twilio -eq 1 ];
     then
-        build_twilio=1
+    package twilio
+    deploy twilio_function twilio/
     fi
-    if [ "${line##*/}" == 'YoutubeIntegration.py' ] || [ "${line#*/}" == 'youtube/requirements.txt' ];
+
+    if [ $build_youtube -eq 1 ];
     then
-        build_youtube=1
+    package youtube youtube_lambda YoutubeIntegration
+    deploy youtube_lambda youtube/
     fi
-done < lambdaChanges
-
-if [ $build_twilio -eq 1 ];
-then
-  package twilio
-  deploy twilio_function twilio/
-fi
-
-if [ $build_youtube -eq 1 ];
-then
-  package youtube youtube_lambda YoutubeIntegration
-  deploy youtube_lambda youtube/
 fi
