@@ -24,13 +24,13 @@ done < lambdaChanges
 if [ $build_twilio -eq 1 ];
 then
   package twilio
-  deploy twilio_function
+  deploy twilio_function twilio/
 fi
 
 if [ $build_youtube -eq 1 ];
 then
   package youtube youtube_lambda YoutubeIntegration
-  deploy youtube_lambda
+  deploy youtube_lambda youtube/
 fi
 
 # Installs necessary dependencies and zips them with integration code
@@ -54,11 +54,11 @@ function deploy () {
     echo "   Uploading lambda function to S3"
     echo "-------------------------------------"
 
-    aws s3 cp $1.zip s3://process-messages-builds
+    aws s3 cp $1.zip s3://process-messages-builds/$2
 
     aws lambda update-function-code --function-name $1 \
     --s3-bucket process-messages-builds \
-    --s3-key $1.zip \
+    --s3-key $2/$1.zip \
     --region us-west-2
 
     echo "---------------------"
