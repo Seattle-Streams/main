@@ -48,7 +48,7 @@ else
         then
             build_twilio=1
         fi
-        if [ "${line##*/}" == 'YoutubeIntegration.py' ] || [ "${line#*/}" == 'youtube/requirements.txt' ];
+        if [ "${line#*/}" == 'youtube/Integration.py' ] || [ "${line#*/}" == 'youtube/requirements.txt' ];
         then
             build_youtube=1
         fi
