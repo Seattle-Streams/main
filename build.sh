@@ -35,7 +35,7 @@ function deploy () {
 }
 
 package twilio
-deploy twilio_lambda twilio/
+deploy twilio_lambda twilio
 # If there are changes to Integrations or dependencies, we need to build
 if ! git diff --name-only $GIT_PREVIOUS_COMMIT $GIT_COMMIT | grep -i 'Integration\|requirements' > lambdaChanges
 then
