@@ -28,13 +28,13 @@ resource "aws_iam_role" "iam_lambda_execution_role" {
 
 # Lambdas
 resource "aws_lambda_function" "twilio_lambda" {
-  function_name = "twilio_lambda"
+  function_name = "twilio_integration"
 
   s3_bucket = "process-messages-builds"
-  s3_key    = "twilio_lambda.zip"
+  s3_key    = "twilio/Integration.zip"
 
   role    = "${aws_iam_role.iam_lambda_execution_role.arn}"
-  handler = "TwilioIntegration.ProcessMessage"
+  handler = "Integration.ProcessMessage"
   runtime = "${var.runtime}"
   timeout = "${var.timeout}"
   environment {
