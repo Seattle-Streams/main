@@ -1,5 +1,4 @@
-rm -f lambdaChanges
-git diff --name-only HEAD 309375ea5794ce86ae2e087aeb2ed5d6304e7942 | grep -i 'Integration\|build' > lambdaChanges
+git diff --name-only $GIT_PREVIOUS_COMMIT $GIT_COMMIT | grep -i 'Integration\|requirements' > lambdaChanges
 
 if [ -s "$lambdaChanges" ];
 then
@@ -11,11 +10,11 @@ build_twilio=0
 build_youtube=0
 while read -r line;
 do
-    if [ "${line#*/}" == 'twilio/Integration.py' ];
+    if [ "${line#*/}" == 'twilio/Integration.py' ] || [ "${line#*/}" == 'twilio/requirements.txt' ];
     then
         build_twilio=1
     fi
-    if [ "${line##*/}" == 'YoutubeIntegration.py' ] || [ "${line#*/}" == 'youtube/build.sh' ];
+    if [ "${line##*/}" == 'YoutubeIntegration.py' ] || [ "${line#*/}" == 'youtube/requirements.txt' ];
     then
         build_youtube=1
     fi
