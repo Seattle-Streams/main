@@ -34,8 +34,6 @@ function deploy () {
     cd ../..
 }
 
-package twilio
-deploy twilio_lambda twilio
 # If there are changes to Integrations or dependencies, we need to build
 if ! git diff --name-only $GIT_PREVIOUS_COMMIT $GIT_COMMIT | grep -i 'Integration\|requirements' > lambdaChanges
 then
@@ -59,12 +57,12 @@ else
     if [ $build_twilio -eq 1 ];
     then
         package twilio
-        deploy twilio_lambda twilio/
+        deploy twilio_integration twilio
     fi
 
     if [ $build_youtube -eq 1 ];
     then
-        package youtube youtube_lambda YoutubeIntegration
-        deploy youtube_lambda youtube/
+        package youtube
+        deploy youtube_lambda youtube
     fi
 fi
