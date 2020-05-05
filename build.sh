@@ -30,6 +30,7 @@ function deploy () {
     --s3-key $2/Integration.zip \
     --region us-west-2
 
+    rm -f Integration.zip
     cd ../..
 }
 
