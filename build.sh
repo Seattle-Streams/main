@@ -15,23 +15,26 @@ function package () {
     
 # Uploads lambda zip to S3 and updates lambda function code
 function deploy () {
-    echo "-------------------------------------"
-    echo "   Uploading lambda function to S3"
-    echo "-------------------------------------"
+    echo "--------------------------------------------------"
+    echo "   Uploading latest lambda function build to S3"
+    echo "--------------------------------------------------"
 
-    aws s3 cp $1.zip s3://process-messages-builds/$2
+    aws s3 cp Integration.zip s3://process-messages-builds/$2
+    
+    echo "-------------------------------------------"
+    echo "   Pointing lambda function to new build"
+    echo "-------------------------------------------"
 
     aws lambda update-function-code --function-name $1 \
     --s3-bucket process-messages-builds \
-    --s3-key $2/$1.zip \
+    --s3-key $2/Integration.zip \
     --region us-west-2
 
-    echo "---------------------"
-    echo "   Upload Complete"
-    echo "---------------------"
     cd ../..
 }
 
+package twilio
+deploy twilio_lambda twilio/
 # If there are changes to Integrations or dependencies, we need to build
 if ! git diff --name-only $GIT_PREVIOUS_COMMIT $GIT_COMMIT | grep -i 'Integration\|requirements' > lambdaChanges
 then
@@ -54,13 +57,13 @@ else
 
     if [ $build_twilio -eq 1 ];
     then
-    package twilio
-    deploy twilio_function twilio/
+        package twilio
+        deploy twilio_lambda twilio/
     fi
 
     if [ $build_youtube -eq 1 ];
     then
-    package youtube youtube_lambda YoutubeIntegration
-    deploy youtube_lambda youtube/
+        package youtube youtube_lambda YoutubeIntegration
+        deploy youtube_lambda youtube/
     fi
 fi
