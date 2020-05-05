@@ -28,7 +28,7 @@ resource "aws_iam_role" "iam_lambda_execution_role" {
 
 # Lambdas
 resource "aws_lambda_function" "twilio_lambda" {
-  function_name = "twilio_integration"
+  function_name = "twilio_lambda"
 
   s3_bucket = "process-messages-builds"
   s3_key    = "twilio/Integration.zip"
@@ -48,10 +48,10 @@ resource "aws_lambda_function" "twilio_lambda" {
 }
 
 resource "aws_lambda_function" "youtube_lambda" {
-  function_name = "youtube_lambda"
+  function_name = "youtube_integration"
 
   s3_bucket = "process-messages-builds"
-  s3_key    = "youtube_lambda.zip"
+  s3_key    = "youtube/Integration.zip"
 
   role    = "${aws_iam_role.iam_lambda_execution_role.arn}"
   handler = "YoutubeIntegration.ProcessMessage"
