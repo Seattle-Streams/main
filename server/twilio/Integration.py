@@ -1,6 +1,7 @@
 import json
 import os
 import boto3
+from urllib.parse import unquote
 
 QUEUE_URL = os.environ['SQS_URL']
 
@@ -11,7 +12,7 @@ sqs = boto3.client('sqs')
 def ShapeMessage(message):
     message = message.split("Body=", 1)[1]
     message = message.split("&FromCountry", 1)[0]
-    message = message.replace("+", " ")
+    message = unquote(message)
     return message
 
 
