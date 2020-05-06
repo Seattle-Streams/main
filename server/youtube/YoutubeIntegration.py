@@ -1,4 +1,4 @@
-# v1.10
+# v1.11
 # TODO: Determine whether we should be using oauth2client (deprecated) or a different library
 
 import os
@@ -122,12 +122,16 @@ def auth():
 
     return youtubeService
 
-
+# ProcessMessage receives an event from SQS and 
+# Note: SQS message batch size is currently 1
+# TODO: Enable this to work with a larger batch size for multiple youtube accounts
 def ProcessMessage(event, context):
-    message = event["body"]
-
-    youtubeObject = auth()
-    liveChatID = getLiveChatID(youtubeObject)
-    response = postMessage(youtubeObject, liveChatID, message)
-    print('Logging YouTube response', response)
+    messages = event['Records']
+    # TODO: handle attributes better. i.e. post messages in order and sort by livechatID 
+    for rawMessage in messages:
+        message = rawMessage['body']
+        youtubeObject = auth()
+        liveChatID = getLiveChatID(youtubeObject)
+        response = postMessage(youtubeObject, liveChatID, message)
+        print('Logging YouTube response', response)
     return {'statusCode': 200}
