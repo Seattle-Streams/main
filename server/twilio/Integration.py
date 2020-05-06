@@ -19,7 +19,7 @@ def ShapeMessage(message):
 # GetNumber parses the incoming message and returns the receiving Twilio phone number
 def GetNumber(message):
     number = message.split("To=", 1)[1]
-    number = message.split("&MessagingServiceSid", 1)[0]
+    number = number.split("&MessagingServiceSid", 1)[0]
     number = unquote(number)
     return number
 
