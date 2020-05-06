@@ -12,13 +12,14 @@ sqs = boto3.client('sqs')
 def ShapeMessage(message):
     message = message.split("Body=", 1)[1]
     message = message.split("&FromCountry", 1)[0]
-    message.replace("+", " ")
+    message = message.replace("+", " ")
     message = unquote(message)
     return message
 
 def GetNumber(message):
     number = message.split("To=", 1)[1]
-    number = number[:20]
+    number = number[:40]
+    number = unquote(number)
     return number
 
 # ProcessMessage extracts the sms message from the request and sends it to an SQS Queue
