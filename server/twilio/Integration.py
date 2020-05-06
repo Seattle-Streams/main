@@ -8,7 +8,7 @@ QUEUE_URL = os.environ['SQS_URL']
 sqs = boto3.client('sqs')
 
 
-# Reshape data
+# Reshape data parses the incoming message and returns the client message
 def ShapeMessage(message):
     message = message.split("Body=", 1)[1]
     message = message.split("&FromCountry", 1)[0]
@@ -16,16 +16,17 @@ def ShapeMessage(message):
     message = unquote(message)
     return message
 
+# GetNumber parses the incoming message and returns the receiving Twilio phone number
 def GetNumber(message):
     number = message.split("To=", 1)[1]
-    number = number[:40]
+    number = message.split("&MessagingServiceSid", 1)[0]
     number = unquote(number)
     return number
 
 # ProcessMessage extracts the sms message from the request and sends it to an SQS Queue
 def ProcessMessage(event, context):
     number = GetNumber(event['body'])
-    print("Logging Twilio Receiving number: ", number)
+    print("Logging Twilio Receiving Number: ", number)
     message = ShapeMessage(event['body'])
 
     print("Logging SMS Message: ", message)
