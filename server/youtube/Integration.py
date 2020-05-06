@@ -40,7 +40,15 @@ def getLiveChatID(youtubeObject) -> str:
     )
     response = request.execute()
     # TODO: sort this list
-    liveChatID = response['items'][0]['snippet']['liveChatId']
+    items = response['items']
+    if len(items) is 0:
+        raise ValueError('youtubeObject is not authenticated to a user with any broadcasts')
+    currentSnippet = items[0]['snippet']
+
+    try:
+        liveChatID = currentSnippet['liveChatId']
+    except KeyError:
+        raise ValueError('youtubeObject is not authenticated to a user with currently streaming broadcast')
     return liveChatID
 
 
@@ -131,7 +139,12 @@ def ProcessMessage(event, context):
     for rawMessage in messages:
         message = rawMessage['body']
         youtubeObject = auth()
-        liveChatID = getLiveChatID(youtubeObject)
+        try:
+            liveChatID = getLiveChatID(youtubeObject)
+        except ValueError:
+            # TODO: decide what to do with messages sent to accounts without currently running livestreams.
+            print('could not find liveChatId')
+            continue
         response = postMessage(youtubeObject, liveChatID, message)
         print('Logging YouTube response', response)
     return {'statusCode': 200}
