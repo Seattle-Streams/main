@@ -10,8 +10,8 @@ sqs = boto3.client('sqs')
 # ProcessMessage extracts the sms message from the request and sends it to an SQS Queue
 def ProcessMessage(event, context):
     requestJSON = parse_qs(event['body'])
-    number = requestJSON['To']
-    message = requestJSON['Body']
+    number = requestJSON['To'][0]
+    message = requestJSON['Body'][0]
 
     response = sqs.send_message(QueueUrl=QUEUE_URL, MessageBody=message, 
     MessageAttributes={'receiving-number': {
