@@ -5,7 +5,7 @@ resource "aws_api_gateway_integration" "lambda_integration" {
   http_method             = "${var.endpoint_http_method}"
   integration_http_method = "${var.endpoint_http_method}"
   type                    = "AWS_PROXY"
-  uri                     = "${aws_lambda_function.twilio_lambda.invoke_arn}"
+  uri                     = "${var.twilio_lambda_invoke_arn}"
 }
 
 # This is used to get the account_id required for the lambda invokation permission below
