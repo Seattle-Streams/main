@@ -21,7 +21,12 @@ data "aws_iam_policy_document" "lambda_policy" {
   }
 }
 
-resource "aws_iam_role" "iam_lambda_execution_role" {
+resource "aws_iam_role" "twilio_lambda_execution_role" {
+  name               = "lambda_execution_role"
+  assume_role_policy = "${data.aws_iam_policy_document.lambda_policy.json}"
+}
+
+resource "aws_iam_role" "youtube_lambda_execution_role" {
   name               = "lambda_execution_role"
   assume_role_policy = "${data.aws_iam_policy_document.lambda_policy.json}"
 }
@@ -33,7 +38,7 @@ resource "aws_lambda_function" "twilio_lambda" {
   s3_bucket = "process-messages-builds"
   s3_key    = "twilio/Integration.zip"
 
-  role    = "${aws_iam_role.iam_lambda_execution_role.arn}"
+  role    = "${aws_iam_role.twilio_lambda_execution_role.arn}"
   handler = "Integration.ProcessMessage"
   runtime = "${var.runtime}"
   timeout = "${var.timeout}"
@@ -53,7 +58,7 @@ resource "aws_lambda_function" "youtube_lambda" {
   s3_bucket = "process-messages-builds"
   s3_key    = "youtube/Integration.zip"
 
-  role    = "${aws_iam_role.iam_lambda_execution_role.arn}"
+  role    = "${aws_iam_role.youtube_lambda_execution_role.arn}"
   handler = "Integration.ProcessMessage"
   runtime = "${var.runtime}"
   timeout = "${var.timeout}"
@@ -106,7 +111,12 @@ data "aws_iam_policy_document" "log_policy" {
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
-  role       = "${aws_iam_role.iam_lambda_execution_role.name}"
+  role       = "${aws_iam_role.twilio_lambda_execution_role.name}"
+  policy_arn = "${aws_iam_policy.lambda_logging.arn}"
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_logs" {
+  role       = "${aws_iam_role.youtube_lambda_execution_role.name}"
   policy_arn = "${aws_iam_policy.lambda_logging.arn}"
 }
 
@@ -184,17 +194,17 @@ data "aws_iam_policy_document" "lambda_access_s3_policy" {
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_send" {
-  role       = "${aws_iam_role.iam_lambda_execution_role.name}"
+  role       = "${aws_iam_role.twilio_lambda_execution_role.name}"
   policy_arn = "${aws_iam_policy.lambda_sending.arn}"
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_receive" {
-  role       = "${aws_iam_role.iam_lambda_execution_role.name}"
+  role       = "${aws_iam_role.youtube_lambda_execution_role.name}"
   policy_arn = "${aws_iam_policy.lambda_receiving.arn}"
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_access_s3" {
-  role       = "${aws_iam_role.iam_lambda_execution_role.name}"
+  role       = "${aws_iam_role.youtube_lambda_execution_role.name}"
   policy_arn = "${aws_iam_policy.lambda_accessing_s3.arn}"
 }
 
