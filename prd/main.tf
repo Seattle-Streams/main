@@ -68,18 +68,29 @@ resource "aws_s3_bucket" "process-messages-builds" {
 
   tags = {
     Name        = "process-messages-builds"
-    Environment = "Prod"
+    Environment = "${locals.environment}"
   }
 }
 
 module "sms_queue" {
   source = "../modules/queue"
 
-  name        = "sms_queue"
-  environment = "${locals.environment}"
+  Name        = "sms_queue"
+  Environment = "${locals.environment}"
 }
 
-# TODO:
-# - add build server module
-# - add youtube_integration_service module
-# - figure out if using outputs correctly (Line 72)
+module "youtube_integration" {
+  source = "../modules/youtube_integration"
+
+  runtime    = "${var.runtime}"
+  timeout    = "${var.timeout}"
+  queue_arn  = "${module.sms_queue.arn}"
+  bucket_id  = "${aws_s3_bucket.process-messages-builds.id}"
+  bucket_arn = "${aws_s3_bucket.process-messages-builds.arn}"
+}
+
+module "jenkins_build_server" {
+  source = "../modules/build_server"
+
+  jenkins = "${var.jenkins}"
+}
