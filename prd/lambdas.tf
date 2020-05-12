@@ -237,7 +237,7 @@ resource "aws_sqs_queue" "sms_queue" {
   receive_wait_time_seconds = 0
 
   tags = {
-    Environment = "production"
+    Environment = "Prod"
   }
 }
 

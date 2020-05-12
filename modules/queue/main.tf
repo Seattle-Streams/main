@@ -1,7 +1,5 @@
-# TODO: make name and environment tag into input vars
-
 resource "aws_sqs_queue" "sms_queue" {
-  name             = "sms_queue"
+  name             = "${var.name}"
   delay_seconds    = 0
   max_message_size = 2048
   # at least 6 times the timeout of the lamda receiving messages
@@ -9,6 +7,6 @@ resource "aws_sqs_queue" "sms_queue" {
   receive_wait_time_seconds = 0
 
   tags = {
-    Environment = "production"
+    Environment = "${var.environment}"
   }
 }

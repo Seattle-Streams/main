@@ -10,7 +10,7 @@ resource "aws_lambda_function" "twilio_lambda" {
   timeout = "${var.timeout}"
   environment {
     variables = {
-      SQS_URL = "${aws_sqs_queue.sms_queue.id}"
+      SQS_URL = "${var.queue_id}"
     }
   }
   depends_on = [
@@ -88,7 +88,7 @@ data "aws_iam_policy_document" "lambda_send_policy" {
       "sqs:SendMessage"
     ]
     resources = [
-      "${aws_sqs_queue.sms_queue.arn}"
+      "${var.queue_arn}"
     ]
   }
 }
