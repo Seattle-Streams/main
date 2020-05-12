@@ -53,11 +53,10 @@ module "process_messages_proxy" {
 }
 
 module "twilio_integration" {
-  source  = "../modules/twilio_integration"
-  runtime = "${var.runtime}"
-  timeout = "${var.timeout}"
-  # is it possible to get the sms_queue.arn like this 
-  # or does it have to be defined as an output value for the queue module ?
+  source = "../modules/twilio_integration"
+
+  runtime   = "${var.runtime}"
+  timeout   = "${var.timeout}"
   queue_arn = "${module.sms_queue.arn}"
   queue_id  = "${module.sms_queue.id}"
 }
@@ -74,7 +73,8 @@ resource "aws_s3_bucket" "process-messages-builds" {
 }
 
 module "sms_queue" {
-  source      = "../modules/queue"
+  source = "../modules/queue"
+
   name        = "sms_queue"
   environment = "${locals.environment}"
 }
