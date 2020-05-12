@@ -1,5 +1,3 @@
-variable "jenkins" {}
-
 # Jenkins EC2
 resource "aws_instance" "server" {
   ami                  = "ami-0d6621c01e8c2de2c" // Amazon Linux 2
