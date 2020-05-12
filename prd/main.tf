@@ -37,15 +37,19 @@ module "process_messages_endpoint" {
   authorization        = "NONE"
 }
 
+data "aws_caller_identity" "current" {}
+
 module "process_messages_proxy" {
   source = "../modules/lambda_proxy"
 
-  api_root_resource_id     = "${module.messages_api.api_root_resource_id}"
-  api_id                   = "${module.messages_api.api_id}"
-  endpoint_resource_id     = "${module.process_messages_endpoint.endpoint_resource_id}"
-  endpoint_http_method     = "${module.process_messages_endpoint.http_method}"
-  process_message_method   = "${var.process_message_method}"
-  twilio_lambda_invoke_arn = "${module.process_messages_service.lambda_invoke_arn}"
+  account_id                  = "${data.aws_caller_identity.current.account_id}"
+  api_id                      = "${module.messages_api.api_id}"
+  endpoint_http_method        = "${var.process_message_method}"
+  endpoint_resource_id        = "${module.process_messages_endpoint.endpoint_resource_id}"
+  region                      = "${var.region}"
+  resource_path               = "${module.messages_api.resource_path}"
+  twilio_lambda_function_name = "${module.twilio_integration.lambda_function_name}"
+  twilio_lambda_invoke_arn    = "${module.twilio_integration.lambda_invoke_arn}"
 }
 
 module "twilio_integration" {
