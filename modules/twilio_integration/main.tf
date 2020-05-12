@@ -24,7 +24,7 @@ resource "aws_lambda_function" "twilio_lambda" {
 ####################################################################################################
 
 resource "aws_iam_role" "twilio_lambda_execution_role" {
-  name               = "lambda_execution_role"
+  name               = "twilio_lambda_execution_role"
   assume_role_policy = "${data.aws_iam_policy_document.lambda_policy.json}"
 }
 
@@ -38,7 +38,7 @@ resource "aws_cloudwatch_log_group" "twilio_lambda_log_group" {
 
 # See also the following AWS managed policy: AWSLambdaBasicExecutionRole
 resource "aws_iam_policy" "twilio_lambda_logging" {
-  name        = "lambda_logging"
+  name        = "twilio_lambda_logging"
   description = "IAM policy for logging from a lambda"
 
   policy = "${data.aws_iam_policy_document.log_policy.json}"
@@ -63,7 +63,6 @@ data "aws_iam_policy_document" "lambda_policy" {
     actions = ["sts:AssumeRole", ]
   }
 }
-
 
 data "aws_iam_policy_document" "lambda_send_policy" {
   statement {

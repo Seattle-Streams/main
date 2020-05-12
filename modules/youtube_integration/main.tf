@@ -26,7 +26,7 @@ resource "aws_lambda_function" "youtube_lambda" {
 ####################################################################################################
 
 resource "aws_iam_role" "youtube_lambda_execution_role" {
-  name               = "lambda_execution_role"
+  name               = "youtube_lambda_execution_role"
   assume_role_policy = "${data.aws_iam_policy_document.lambda_policy.json}"
 }
 
@@ -38,7 +38,7 @@ resource "aws_cloudwatch_log_group" "youtube_lambda_log_group" {
 
 # See also the following AWS managed policy: AWSLambdaBasicExecutionRole
 resource "aws_iam_policy" "youtube_lambda_logging" {
-  name        = "lambda_logging"
+  name        = "youtube_lambda_logging"
   description = "IAM policy for logging from a lambda"
 
   policy = "${data.aws_iam_policy_document.log_policy.json}"
