@@ -18,6 +18,7 @@ resource "aws_instance" "server" {
       "sudo yum -y update",
       "sudo yum -y install git-all",
       "sudo yum -y install java-1.8.0",
+      "sudo yum -y install python3-pip",
       "sudo wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins.io/redhat/jenkins.repo",
       "sudo rpm --import http://pkg.jenkins.io/redhat/jenkins.io.key",
       "sudo yum -y install jenkins",

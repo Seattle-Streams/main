@@ -37,7 +37,7 @@ resource "aws_cloudwatch_log_group" "twilio_lambda_log_group" {
 
 
 # See also the following AWS managed policy: AWSLambdaBasicExecutionRole
-resource "aws_iam_policy" "lambda_logging" {
+resource "aws_iam_policy" "twilio_lambda_logging" {
   name        = "lambda_logging"
   description = "IAM policy for logging from a lambda"
 
@@ -96,5 +96,5 @@ resource "aws_iam_role_policy_attachment" "lambda_send" {
 
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
   role       = "${aws_iam_role.twilio_lambda_execution_role.name}"
-  policy_arn = "${aws_iam_policy.lambda_logging.arn}"
+  policy_arn = "${aws_iam_policy.twilio_lambda_logging.arn}"
 }

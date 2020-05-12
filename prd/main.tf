@@ -40,27 +40,27 @@ module "process_messages_endpoint" {
 # Use this to get account id
 data "aws_caller_identity" "current" {}
 
-module "process_messages_proxy" {
-  source = "../modules/lambda_proxy"
+# module "process_messages_proxy" {
+#   source = "../modules/lambda_proxy"
 
-  account_id                  = "${data.aws_caller_identity.current.account_id}"
-  api_id                      = "${module.messages_api.api_id}"
-  endpoint_http_method        = "${var.process_message_method}"
-  endpoint_resource_id        = "${module.process_messages_endpoint.endpoint_resource_id}"
-  region                      = "${var.region}"
-  resource_path               = "${module.messages_api.resource_path}"
-  twilio_lambda_function_name = "${module.twilio_integration.lambda_function_name}"
-  twilio_lambda_invoke_arn    = "${module.twilio_integration.lambda_invoke_arn}"
-}
+#   account_id                  = "${data.aws_caller_identity.current.account_id}"
+#   api_id                      = "${module.messages_api.api_id}"
+#   endpoint_http_method        = "${var.process_message_method}"
+#   endpoint_resource_id        = "${module.process_messages_endpoint.endpoint_resource_id}"
+#   region                      = "${var.region}"
+#   resource_path               = "${module.process_messages_endpoint.resource_path}"
+#   twilio_lambda_function_name = "${module.twilio_integration.lambda_function_name}"
+#   twilio_lambda_invoke_arn    = "${module.twilio_integration.lambda_invoke_arn}"
+# }
 
-module "twilio_integration" {
-  source = "../modules/twilio_integration"
+# module "twilio_integration" {
+#   source = "../modules/twilio_integration"
 
-  runtime   = "${var.runtime}"
-  timeout   = "${var.timeout}"
-  queue_arn = "${module.sms_queue.arn}"
-  queue_id  = "${module.sms_queue.id}"
-}
+#   runtime   = "${var.runtime}"
+#   timeout   = "${var.timeout}"
+#   queue_arn = "${module.sms_queue.arn}"
+#   queue_id  = "${module.sms_queue.id}"
+# }
 
 # Bucket for process messages service
 resource "aws_s3_bucket" "process-messages-builds" {
@@ -73,6 +73,7 @@ resource "aws_s3_bucket" "process-messages-builds" {
   }
 }
 
+# Queue for the process messages service
 module "sms_queue" {
   source = "../modules/queue"
 
@@ -80,16 +81,17 @@ module "sms_queue" {
   Environment = "${local.environment}"
 }
 
-module "youtube_integration" {
-  source = "../modules/youtube_integration"
+# module "youtube_integration" {
+#   source = "../modules/youtube_integration"
 
-  runtime    = "${var.runtime}"
-  timeout    = "${var.timeout}"
-  queue_arn  = "${module.sms_queue.arn}"
-  bucket_id  = "${aws_s3_bucket.process-messages-builds.id}"
-  bucket_arn = "${aws_s3_bucket.process-messages-builds.arn}"
-}
+#   runtime    = "${var.runtime}"
+#   timeout    = "${var.timeout}"
+#   queue_arn  = "${module.sms_queue.arn}"
+#   bucket_id  = "${aws_s3_bucket.process-messages-builds.id}"
+#   bucket_arn = "${aws_s3_bucket.process-messages-builds.arn}"
+# }
 
+# Jenkins build server builds lambda function code
 module "jenkins_build_server" {
   source = "../modules/build_server"
 
