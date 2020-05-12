@@ -37,6 +37,7 @@ module "process_messages_endpoint" {
   authorization        = "NONE"
 }
 
+# Use this to get account id
 data "aws_caller_identity" "current" {}
 
 module "process_messages_proxy" {
