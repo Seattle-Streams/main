@@ -26,6 +26,9 @@ module "messages_api" {
 
   name        = "messageAPI"
   description = "This is the Civic Coffee Hour API"
+  dependencies = [
+    "${module.process_messages_proxy.depended_on}",
+  ]
 }
 
 module "process_messages_endpoint" {

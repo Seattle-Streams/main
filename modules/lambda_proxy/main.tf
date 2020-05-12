@@ -24,10 +24,8 @@ resource "aws_lambda_permission" "apigw_lambda" {
   source_arn = "arn:aws:execute-api:${var.region}:${var.account_id}:${var.api_id}/*/${var.endpoint_http_method}${var.resource_path}"
 }
 
-resource "aws_api_gateway_deployment" "messages_deployment" {
-  depends_on = ["aws_api_gateway_integration.lambda_integration"]
-
-  rest_api_id = "${var.api_id}"
-  stage_name  = "v1"
-  description = "Initial deployment"
+resource "null_resource" "dependency_setter" {
+  depends_on = [
+    "aws_api_gateway_integration.lambda_integration",
+  ]
 }
