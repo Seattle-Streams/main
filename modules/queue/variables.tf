@@ -1,7 +1,7 @@
-variable "environment" {
+variable "Environment" {
   description = "Dev/Stg/Prod"
 }
 
-variable "name" {
+variable "Name" {
   description = "Name of the queue"
 }
