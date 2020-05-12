@@ -1,15 +1,3 @@
-variable "AWS_ACCESS_KEY_ID" {}
-variable "AWS_SECRET_ACCESS_KEY" {}
-variable "region" {}
-
-variable "runtime" {}
-variable "timeout" {}
-
-variable "process_message_method" {}
-
-variable "jenkins" {}
-
-
 locals {
   environment = "Prod"
 }
@@ -49,8 +37,8 @@ module "process_messages_endpoint" {
   authorization        = "NONE"
 }
 
-module "process_messages_integration" {
-  source = "../modules/lambda_integration"
+module "process_messages_proxy" {
+  source = "../modules/lambda_proxy"
 
   api_root_resource_id     = "${module.messages_api.api_root_resource_id}"
   api_id                   = "${module.messages_api.api_id}"
@@ -60,8 +48,8 @@ module "process_messages_integration" {
   twilio_lambda_invoke_arn = "${module.process_messages_service.lambda_invoke_arn}"
 }
 
-module "process_messages_service" {
-  source  = "../modules/process_messages_service"
+module "twilio_integration" {
+  source  = "../modules/twilio_integration"
   runtime = "${var.runtime}"
   timeout = "${var.timeout}"
   # is it possible to get the sms_queue.arn like this 
