@@ -62,7 +62,7 @@ module "twilio_integration" {
   queue_id  = "${module.sms_queue.id}"
 }
 
-
+# Bucket for process messages service
 resource "aws_s3_bucket" "process-messages-builds" {
   bucket = "process-messages-builds"
   acl    = "private"
