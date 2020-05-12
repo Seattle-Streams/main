@@ -117,7 +117,7 @@ data "aws_iam_policy_document" "update_s3" {
       "s3:PutObject",
       "s3:GetObject"
     ]
-    resources = ["${aws_s3_bucket.process-messages-builds.arn}/*", ]
+    resources = ["${var.process_messages_bucket_arn}/*", ]
   }
 }
 
