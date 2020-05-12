@@ -69,7 +69,7 @@ resource "aws_s3_bucket" "process-messages-builds" {
 
   tags = {
     Name        = "process-messages-builds"
-    Environment = "${locals.environment}"
+    Environment = "${local.environment}"
   }
 }
 
@@ -77,7 +77,7 @@ module "sms_queue" {
   source = "../modules/queue"
 
   Name        = "sms_queue"
-  Environment = "${locals.environment}"
+  Environment = "${local.environment}"
 }
 
 module "youtube_integration" {
@@ -93,5 +93,6 @@ module "youtube_integration" {
 module "jenkins_build_server" {
   source = "../modules/build_server"
 
-  jenkins = "${var.jenkins}"
+  jenkins                     = "${var.jenkins}"
+  process_messages_bucket_arn = "${aws_s3_bucket.process-messages-builds.arn}"
 }
