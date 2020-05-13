@@ -76,6 +76,15 @@ resource "aws_s3_bucket" "process-messages-builds" {
   }
 }
 
+# This module is the same as the above resource
+#module "process_messages_bucket" {
+#  source = "../modules/s3"
+
+#  bucket_name = "process_messages"
+#  tag_name    = "process_messages"
+#  environment = "${local.environment}"
+#}
+
 # Queue for the process messages service
 module "sms_queue" {
   source = "../modules/queue"
@@ -92,6 +101,14 @@ module "youtube_integration" {
   queue_arn  = "${module.sms_queue.arn}"
   bucket_id  = "${aws_s3_bucket.process-messages-builds.id}"
   bucket_arn = "${aws_s3_bucket.process-messages-builds.arn}"
+}
+
+module "user_table" {
+  source = "../modules/dynamodb"
+
+  billing_mode  = "PAY_PER_REQUEST"
+  hash_key_attr = "Email"
+  table_name    = "user"
 }
 
 # Jenkins build server builds lambda function code

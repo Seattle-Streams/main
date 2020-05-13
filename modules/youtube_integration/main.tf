@@ -58,6 +58,13 @@ resource "aws_iam_policy" "lambda_accessing_s3" {
   policy = "${data.aws_iam_policy_document.lambda_access_s3_policy.json}"
 }
 
+resource "aws_iam_policy" "accessing_dynamo" {
+  name        = "accessing_dynamo"
+  description = "IAM policy for reading items from dynamo"
+
+  policy = "${data.aws_iam_policy_document.access_dynamo_policy.json}"
+}
+
 data "aws_iam_policy_document" "lambda_policy" {
   statement {
     effect = "Allow"
@@ -108,6 +115,18 @@ data "aws_iam_policy_document" "lambda_access_s3_policy" {
 
 }
 
+data "aws_iam_policy_document" "access_dynamo_policy" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "dynamodb:GetItem",
+      #   "dynamodb:PutItem" This creates new items
+    ]
+    resources = ["arn:aws:dynamodb:${var.region}:${var.account_id}:table/${var.table_name}"]
+  }
+}
+
 data "aws_iam_policy_document" "log_policy" {
   statement {
     effect = "Allow"
@@ -128,6 +147,11 @@ resource "aws_iam_role_policy_attachment" "lambda_receive" {
 resource "aws_iam_role_policy_attachment" "lambda_access_s3" {
   role       = "${aws_iam_role.youtube_lambda_execution_role.name}"
   policy_arn = "${aws_iam_policy.lambda_accessing_s3.arn}"
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_access_dynamo" {
+  role       = "${aws_iam_role.youtube_lambda_execution_role.name}"
+  policy_arn = "${aws_iam_policy.accessing_dynamo.arn}"
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
