@@ -96,11 +96,14 @@ module "sms_queue" {
 module "youtube_integration" {
   source = "../modules/youtube_integration"
 
-  runtime    = "${var.runtime}"
-  timeout    = "${var.timeout}"
-  queue_arn  = "${module.sms_queue.arn}"
-  bucket_id  = "${aws_s3_bucket.process-messages-builds.id}"
+  account_id = "${data.aws_caller_identity.current.account_id}"
   bucket_arn = "${aws_s3_bucket.process-messages-builds.arn}"
+  bucket_id  = "${aws_s3_bucket.process-messages-builds.id}"
+  queue_arn  = "${module.sms_queue.arn}"
+  region     = "${var.region}"
+  runtime    = "${var.runtime}"
+  table_name = "${module.user_table.id}"
+  timeout    = "${var.timeout}"
 }
 
 module "user_table" {
