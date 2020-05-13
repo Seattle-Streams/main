@@ -6,12 +6,12 @@ resource "aws_dynamodb_table" "dynamo_table" {
   # Client email for account purposes
   attribute {
     name = "${var.hash_key_attr}"
-    type = "S"
+    type = "${var.hash_key_attr_type}"
   }
 
   # This sets up DB table backup for up to 35 days into the past
   point_in_time_recovery {
-    enabled = true
+    enabled = "${var.recovery_enabled}"
   }
 
   # The only attributes you need to specify are the hash key and, optionally,

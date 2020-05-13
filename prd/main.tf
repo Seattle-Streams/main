@@ -109,9 +109,11 @@ module "youtube_integration" {
 module "user_table" {
   source = "../modules/dynamodb"
 
-  billing_mode  = "PAY_PER_REQUEST"
-  hash_key_attr = "Email"
-  table_name    = "user"
+  billing_mode       = "PAY_PER_REQUEST"
+  hash_key_attr      = "Email"
+  hash_key_attr_type = "S"
+  recovery_enabled   = true
+  table_name         = "user"
 }
 
 # Jenkins build server builds lambda function code
