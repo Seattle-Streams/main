@@ -122,6 +122,8 @@ module "user_table" {
 module "jenkins_build_server" {
   source = "../modules/build_server"
 
+  account_id                  = "${data.aws_caller_identity.current.account_id}"
   jenkins                     = "${var.jenkins}"
   process_messages_bucket_arn = "${aws_s3_bucket.process-messages-builds.arn}"
+  region                      = "${var.region}"
 }

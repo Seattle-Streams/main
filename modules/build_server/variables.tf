@@ -8,3 +8,6 @@ variable "process_messages_bucket_arn" {
   type        = string
 }
 
+variable "region" {}
+
+variable "account_id" {}
