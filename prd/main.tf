@@ -59,10 +59,12 @@ module "process_messages_proxy" {
 module "twilio_integration" {
   source = "../modules/twilio_integration"
 
-  runtime   = "${var.runtime}"
-  timeout   = "${var.timeout}"
-  queue_arn = "${module.sms_queue.arn}"
-  queue_id  = "${module.sms_queue.id}"
+  account_id = "${data.aws_caller_identity.current.account_id}"
+  queue_arn  = "${module.sms_queue.arn}"
+  queue_id   = "${module.sms_queue.id}"
+  region     = "${var.region}"
+  runtime    = "${var.runtime}"
+  timeout    = "${var.timeout}"
 }
 
 # Bucket for process messages service

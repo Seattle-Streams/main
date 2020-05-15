@@ -13,3 +13,7 @@ variable "queue_arn" {
 variable "queue_id" {
   description = "ID of the queue used to send messages to"
 }
+
+variable "region" {}
+
+variable "account_id" {}
