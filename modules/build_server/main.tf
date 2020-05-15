@@ -125,10 +125,10 @@ module "update_lambda" {
 
 resource "aws_iam_role_policy_attachment" "worker_s3_attachment" {
   role       = "${aws_iam_role.worker_role.name}"
-  policy_arn = "${aws_iam_policy.s3_policy.arn}"
+  policy_arn = "${module.ec2_accessing_s3.arn}"
 }
 
 resource "aws_iam_role_policy_attachment" "worker_lambda_attachment" {
   role       = "${aws_iam_role.worker_role.name}"
-  policy_arn = "${aws_iam_policy.lambda_policy.arn}"
+  policy_arn = "${module.update_lambda.arn}"
 }
