@@ -103,43 +103,24 @@ data "aws_iam_policy_document" "worker_execution" {
   }
 }
 
-resource "aws_iam_policy" "s3_policy" {
-  name = "PushToS3Policy"
-  path = "/"
+module "ec2_accessing_s3" {
+  source = "../policies"
 
-  policy = "${data.aws_iam_policy_document.update_s3.json}"
+  actions     = ["s3:PutObject", "s3:GetObject"]
+  description = "IAM policy for ec2 reading and writing files from s3"
+  effect      = "Allow"
+  name        = "ec2_accessing_s3"
+  resources   = "${var.process_messages_bucket_arn}/*"
 }
 
-data "aws_iam_policy_document" "update_s3" {
-  statement {
-    effect = "Allow"
+module "update_lambda" {
+  source = "../policies"
 
-    actions = [
-      "s3:PutObject",
-      "s3:GetObject"
-    ]
-    resources = ["${var.process_messages_bucket_arn}/*", ]
-  }
-}
-
-resource "aws_iam_policy" "lambda_policy" {
-  name = "DeployLambdaPolicy"
-  path = "/"
-
-  policy = "${data.aws_iam_policy_document.update_lambda.json}"
-}
-
-data "aws_iam_policy_document" "update_lambda" {
-  statement {
-    effect = "Allow"
-
-    actions = [
-      "lambda:UpdateFunctionCode",
-      "lambda:PublishVersion",
-      "lambda:UpdateAlias"
-    ]
-    resources = ["*"]
-  }
+  actions     = ["lambda:UpdateFunctionCode", "lambda:PublishVersion", "lambda:UpdateAlias"]
+  description = "IAM policy for updating lambda function code"
+  effect      = "Allow"
+  name        = "update_lambda"
+  resources   = "arn:aws:lambda:${var.region}:${var.account_id}:function:*"
 }
 
 resource "aws_iam_role_policy_attachment" "worker_s3_attachment" {
