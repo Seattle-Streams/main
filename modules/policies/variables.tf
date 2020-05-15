@@ -1,10 +1,9 @@
-variable "name" {}
+variable "actions" {}
 
 variable "description" {}
 
 variable "effect" {}
 
+variable "name" {}
+
 variable "resources" {}
-
-variable "actions" {}
-

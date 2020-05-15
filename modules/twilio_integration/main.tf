@@ -38,11 +38,13 @@ resource "aws_cloudwatch_log_group" "twilio_lambda_log_group" {
 
 # See also the following AWS managed policy: AWSLambdaBasicExecutionRole
 module "twilio_lambda_logging" {
-  source = "../logging"
+  source = "../policies"
 
-  name       = "twilio_lambda"
-  region     = "${var.region}"
-  account_id = "${var.account_id}"
+  actions     = ["logs:CreateLogStream", "logs:PutLogEvents"]
+  description = "IAM policy for lambda logging to CloudWatch"
+  effect      = "Allow"
+  name        = "twilio_lambda_logging"
+  resources   = "arn:aws:logs:${var.region}:${var.account_id}:*"
 }
 
 resource "aws_iam_policy" "lambda_sending" {
