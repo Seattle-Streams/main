@@ -28,6 +28,18 @@ resource "aws_iam_role" "twilio_lambda_execution_role" {
   assume_role_policy = "${data.aws_iam_policy_document.lambda_policy.json}"
 }
 
+data "aws_iam_policy_document" "lambda_policy" {
+  statement {
+    effect = "Allow"
+
+    principals {
+      identifiers = ["lambda.amazonaws.com"]
+      type        = "Service"
+    }
+
+    actions = ["sts:AssumeRole", ]
+  }
+}
 
 # This is to manage the CloudWatch Log Group for the Lambda Function.
 resource "aws_cloudwatch_log_group" "twilio_lambda_log_group" {
@@ -47,44 +59,22 @@ module "twilio_lambda_logging" {
   resources   = "arn:aws:logs:${var.region}:${var.account_id}:*"
 }
 
-resource "aws_iam_policy" "lambda_sending" {
-  name        = "lambda_sending"
+module "lambda_sending" {
+  source = "../policies"
+
+  actions     = ["sqs:SendMessage"]
   description = "IAM policy for sending to sqs from a lambda"
-
-  policy = "${data.aws_iam_policy_document.lambda_send_policy.json}"
-}
-
-data "aws_iam_policy_document" "lambda_policy" {
-  statement {
-    effect = "Allow"
-
-    principals {
-      identifiers = ["lambda.amazonaws.com"]
-      type        = "Service"
-    }
-
-    actions = ["sts:AssumeRole", ]
-  }
-}
-
-data "aws_iam_policy_document" "lambda_send_policy" {
-  statement {
-    effect = "Allow"
-    actions = [
-      "sqs:SendMessage"
-    ]
-    resources = [
-      "${var.queue_arn}"
-    ]
-  }
-}
-
-resource "aws_iam_role_policy_attachment" "lambda_send" {
-  role       = "${aws_iam_role.twilio_lambda_execution_role.name}"
-  policy_arn = "${aws_iam_policy.lambda_sending.arn}"
+  effect      = "Allow"
+  name        = "lambda_sending"
+  resources   = "${var.queue_arn}"
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
   role       = "${aws_iam_role.twilio_lambda_execution_role.name}"
   policy_arn = "${module.twilio_lambda_logging.arn}"
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_send" {
+  role       = "${aws_iam_role.twilio_lambda_execution_role.name}"
+  policy_arn = "${module.lambda_sending.arn}"
 }
