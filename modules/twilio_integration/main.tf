@@ -38,7 +38,7 @@ resource "aws_cloudwatch_log_group" "twilio_lambda_log_group" {
 
 # See also the following AWS managed policy: AWSLambdaBasicExecutionRole
 module "twilio_lambda_logging" {
-  source = "../policies/logging"
+  source = "../logging"
 
   name       = "twilio_lambda"
   region     = "${var.region}"
