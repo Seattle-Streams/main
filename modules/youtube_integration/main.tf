@@ -30,41 +30,6 @@ resource "aws_iam_role" "youtube_lambda_execution_role" {
   assume_role_policy = "${data.aws_iam_policy_document.lambda_policy.json}"
 }
 
-# This is to manage the CloudWatch Log Group for the Lambda Function.
-resource "aws_cloudwatch_log_group" "youtube_lambda_log_group" {
-  name              = "/aws/lambda/${aws_lambda_function.youtube_lambda.function_name}"
-  retention_in_days = 30
-}
-
-# See also the following AWS managed policy: AWSLambdaBasicExecutionRole
-resource "aws_iam_policy" "youtube_lambda_logging" {
-  name        = "youtube_lambda_logging"
-  description = "IAM policy for logging from a lambda"
-
-  policy = "${data.aws_iam_policy_document.log_policy.json}"
-}
-
-resource "aws_iam_policy" "lambda_receiving" {
-  name        = "lambda_receiving"
-  description = "IAM policy for lambda receiving messages from sqs"
-
-  policy = "${data.aws_iam_policy_document.lambda_receive_policy.json}"
-}
-
-resource "aws_iam_policy" "lambda_accessing_s3" {
-  name        = "lambda_accessing_s3"
-  description = "IAM policy for lambda reading files from s3"
-
-  policy = "${data.aws_iam_policy_document.lambda_access_s3_policy.json}"
-}
-
-resource "aws_iam_policy" "accessing_dynamo" {
-  name        = "accessing_dynamo"
-  description = "IAM policy for reading items from dynamo"
-
-  policy = "${data.aws_iam_policy_document.access_dynamo_policy.json}"
-}
-
 data "aws_iam_policy_document" "lambda_policy" {
   statement {
     effect = "Allow"
@@ -78,85 +43,72 @@ data "aws_iam_policy_document" "lambda_policy" {
   }
 }
 
-data "aws_iam_policy_document" "lambda_receive_policy" {
-  statement {
-    effect = "Allow"
-    actions = [
-      "sqs:ReceiveMessage",
-      "sqs:DeleteMessage",
-      "sqs:GetQueueAttributes"
-    ]
-    resources = [
-      "${var.queue_arn}"
-    ]
-  }
+# This is to manage the CloudWatch Log Group for the Lambda Function.
+resource "aws_cloudwatch_log_group" "youtube_lambda_log_group" {
+  name              = "/aws/lambda/${aws_lambda_function.youtube_lambda.function_name}"
+  retention_in_days = 30
 }
 
-data "aws_iam_policy_document" "lambda_access_s3_policy" {
+# See also the following AWS managed policy: AWSLambdaBasicExecutionRole
+module "youtube_lambda_logging" {
+  source = "../policies"
 
-  statement {
-    effect = "Allow"
-
-    actions = [
-      "s3:ListAllMyBuckets",
-      "s3:GetBucketLocation"
-    ]
-    resources = ["*"]
-  }
-
-  statement {
-    effect = "Allow"
-
-    actions = [
-      "s3:*"
-    ]
-    resources = ["${var.bucket_arn}/*", ]
-  }
-
+  actions     = ["logs:CreateLogStream", "logs:PutLogEvents"]
+  description = "IAM policy for lambda logging to CloudWatch"
+  effect      = "Allow"
+  name        = "youtube_lambda_logging"
+  resources   = "arn:aws:logs:${var.region}:${var.account_id}:*"
 }
 
-data "aws_iam_policy_document" "access_dynamo_policy" {
-  statement {
-    effect = "Allow"
+module "lambda_receiving" {
+  source = "../policies"
 
-    actions = [
-      "dynamodb:GetItem",
-      #   "dynamodb:PutItem" This creates new items
-    ]
-    resources = ["arn:aws:dynamodb:${var.region}:${var.account_id}:table/${var.table_name}"]
-  }
+  actions     = ["sqs:ReceiveMessage", "sqs:DeleteMessage", "sqs:GetQueueAttributes"]
+  description = "IAM policy for lambda receiving messages from sqs"
+  effect      = "Allow"
+  name        = "lambda_receiving"
+  resources   = "${var.queue_arn}"
 }
 
-data "aws_iam_policy_document" "log_policy" {
-  statement {
-    effect = "Allow"
+module "accessing_dynamo" {
+  source = "../policies"
 
-    actions = [
-      "logs:CreateLogStream",
-      "logs:PutLogEvents"
-    ]
-    resources = ["arn:aws:logs:*:*:*"]
-  }
+  #   "dynamodb:PutItem" allows you to create new items
+  actions     = ["dynamodb:GetItem", ]
+  description = "IAM policy for reading items from dynamo"
+  effect      = "Allow"
+  name        = "accessing_dynamo"
+  resources   = "arn:aws:dynamodb:${var.region}:${var.account_id}:table/${var.table_name}"
+}
+
+module "lambda_accessing_s3" {
+  source = "../policies"
+
+  actions     = ["s3:PutObject", "s3:GetObject"]
+  description = "IAM policy for lambda reading files from s3"
+  effect      = "Allow"
+  name        = "lambda_accessing_s3"
+  resources   = "${var.bucket_arn}/*"
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_receive" {
   role       = "${aws_iam_role.youtube_lambda_execution_role.name}"
-  policy_arn = "${aws_iam_policy.lambda_receiving.arn}"
+  policy_arn = "${module.lambda_receiving.arn}"
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_access_s3" {
   role       = "${aws_iam_role.youtube_lambda_execution_role.name}"
-  policy_arn = "${aws_iam_policy.lambda_accessing_s3.arn}"
+  policy_arn = "${module.lambda_accessing_s3.arn}"
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_access_dynamo" {
   role       = "${aws_iam_role.youtube_lambda_execution_role.name}"
-  policy_arn = "${aws_iam_policy.accessing_dynamo.arn}"
+  policy_arn = "${module.accessing_dynamo.arn}"
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
   role       = "${aws_iam_role.youtube_lambda_execution_role.name}"
-  policy_arn = "${aws_iam_policy.youtube_lambda_logging.arn}"
+  policy_arn = "${module.youtube_lambda_logging.arn}"
 }
 
 ####################################################################################################
