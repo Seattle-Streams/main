@@ -1,3 +1,3 @@
 output "arn" {
-  value = "${aws_iam_policy.logging_policy.arn}"
+  value = "${aws_iam_policy.policy.arn}"
 }
