@@ -79,13 +79,14 @@ resource "aws_s3_bucket" "process-messages-builds" {
 }
 
 # This module is the same as the above resource
-#module "process_messages_bucket" {
-#  source = "../modules/s3"
+module "process_messages_bucket" {
+  source = "../modules/s3"
 
-#  bucket_name = "process_messages"
-#  tag_name    = "process_messages"
-#  environment = "${local.environment}"
-#}
+  acl         = "private"
+  bucket_name = "process_messages"
+  tag_name    = "process_messages"
+  environment = "${local.environment}"
+}
 
 # Queue for the process messages service
 module "sms_queue" {
