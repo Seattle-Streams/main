@@ -1,8 +1,8 @@
 resource "aws_lambda_function" "twilio_lambda" {
   function_name = "twilio_lambda"
 
-  s3_bucket = "process-messages-builds"
-  s3_key    = "twilio/Integration.zip"
+  s3_bucket = "${var.bucket_id}"
+  s3_key    = "${var.s3_key}"
 
   role    = "${aws_iam_role.twilio_lambda_execution_role.arn}"
   handler = "Integration.ProcessMessage"

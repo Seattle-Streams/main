@@ -60,10 +60,12 @@ module "twilio_integration" {
   source = "../modules/twilio_integration"
 
   account_id = "${data.aws_caller_identity.current.account_id}"
+  bucket_id  = "${module.process_messages_bucket.id}"
   queue_arn  = "${module.sms_queue.arn}"
   queue_id   = "${module.sms_queue.id}"
   region     = "${var.region}"
   runtime    = "${var.runtime}"
+  s3_key     = "twilio/Integration.zip"
   timeout    = "${var.timeout}"
 }
 
@@ -105,6 +107,7 @@ module "youtube_integration" {
   queue_arn  = "${module.sms_queue.arn}"
   region     = "${var.region}"
   runtime    = "${var.runtime}"
+  #   s3_key     = "youtube/Integration.zip"
   table_name = "${module.user_table.id}"
   timeout    = "${var.timeout}"
 }
