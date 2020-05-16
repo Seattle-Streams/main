@@ -83,8 +83,8 @@ module "process_messages_bucket" {
   source = "../modules/s3"
 
   acl         = "private"
-  bucket_name = "process_messages"
-  tag_name    = "process_messages"
+  bucket_name = "process-messages"
+  tag_name    = "process-messages"
   environment = "${local.environment}"
 }
 
