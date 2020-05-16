@@ -70,17 +70,6 @@ module "twilio_integration" {
 }
 
 # Bucket for process messages service
-resource "aws_s3_bucket" "process-messages-builds" {
-  bucket = "process-messages-builds"
-  acl    = "private"
-
-  tags = {
-    Name        = "process-messages-builds"
-    Environment = "${local.environment}"
-  }
-}
-
-# This module is the same as the above resource
 module "process_messages_bucket" {
   source = "../modules/s3"
 
