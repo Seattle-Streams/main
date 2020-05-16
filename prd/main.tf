@@ -125,6 +125,6 @@ module "jenkins_build_server" {
 
   account_id                  = "${data.aws_caller_identity.current.account_id}"
   jenkins                     = "${var.jenkins}"
-  process_messages_bucket_arn = "${aws_s3_bucket.process-messages-builds.arn}"
+  process_messages_bucket_arn = "${module.process_messages_bucket.arn}"
   region                      = "${var.region}"
 }
