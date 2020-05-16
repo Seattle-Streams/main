@@ -101,6 +101,7 @@ module "youtube_integration" {
   timeout    = "${var.timeout}"
 }
 
+# DynamoDB table associating customers w/ 3rd party accounts req'd for integrations
 module "user_table" {
   source = "../modules/dynamodb"
 
