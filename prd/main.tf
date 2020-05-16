@@ -102,12 +102,12 @@ module "youtube_integration" {
   source = "../modules/youtube_integration"
 
   account_id = "${data.aws_caller_identity.current.account_id}"
-  bucket_arn = "${aws_s3_bucket.process-messages-builds.arn}"
-  bucket_id  = "${aws_s3_bucket.process-messages-builds.id}"
+  bucket_arn = "${module.process_messages_bucket.arn}"
+  bucket_id  = "${module.process_messages_bucket.id}"
   queue_arn  = "${module.sms_queue.arn}"
   region     = "${var.region}"
   runtime    = "${var.runtime}"
-  #   s3_key     = "youtube/Integration.zip"
+  s3_key     = "youtube/Integration.zip"
   table_name = "${module.user_table.id}"
   timeout    = "${var.timeout}"
 }
