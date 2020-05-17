@@ -56,6 +56,15 @@ module "process_messages_proxy" {
   twilio_lambda_invoke_arn    = "${module.twilio_integration.lambda_invoke_arn}"
 }
 
+module "process_messages_response" {
+  source = "../modules/endpoint_response"
+
+  api_id      = "${module.messages_api.api_id}"
+  http_method = "${var.process_message_method}"
+  resource_id = "${module.process_messages_endpoint.endpoint_resource_id}"
+  status_code = "200"
+}
+
 module "twilio_integration" {
   source = "../modules/twilio_integration"
 
