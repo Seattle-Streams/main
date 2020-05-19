@@ -80,7 +80,7 @@ data "aws_iam_policy_document" "codebuild_execution_policy" {
   statement {
     effect = "Allow"
     principals {
-      type        = "AWS"
+      type        = "Service"
       identifiers = ["codebuild.amazonaws.com"]
     }
     actions = ["sts:AssumeRole"]
