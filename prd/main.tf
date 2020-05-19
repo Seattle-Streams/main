@@ -132,3 +132,18 @@ module "jenkins_build_server" {
   process_messages_bucket_arn = "${module.process_messages_bucket.arn}"
   region                      = "${var.region}"
 }
+
+module "twilio_codebuild_project" {
+  source = "../modules/codebuild"
+
+  account_id  = "${data.aws_caller_identity.current}"
+  bucket_name = "${module.process_messages_bucket.id}"
+  bucket_path = "twilio"
+  build_path  = "lambda/twilio"
+  description = "Build project for the twilio lambda function"
+  environment = "${local.environment}"
+  name        = "twilio_build"
+  region      = "${var.region}"
+  source_url  = "https://github.com/Seattle-Streams/python.git"
+  token       = "${var.codebuild_github_token}"
+}
