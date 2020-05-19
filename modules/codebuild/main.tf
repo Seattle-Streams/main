@@ -26,12 +26,14 @@ resource "aws_codebuild_project" "build" {
 
   source {
     type            = "GITHUB"
+    buildspec       = "${var.build_path}/buildspec.yml"
     location        = "${var.source_url}" //https://github.com/Seattle-Streams/python.git
     git_clone_depth = 1
 
     git_submodules_config {
       fetch_submodules = true
     }
+    report_build_status = true
   }
 
   source_version = "dev"
@@ -120,31 +122,3 @@ module "codebuild_s3_access" {
   resources   = "${aws_s3_bucket.example.arn}/*"
 }
 
-resource "aws_iam_role_policy" "example" {
-  role = "${aws_iam_role.example.name}"
-
-  policy = "${data.aws_iam_policy_document.net.json}"
-}
-
-data "aws_iam_policy_document" "net" {
-  statement {
-    effect    = "Allow"
-    actions   = ["ec2:CreateNetworkInterfacePermission"]
-    resources = ["arn:aws:ec2:${var.region}:${var.account_id}:network-interface/*"]
-    condition {
-      StringEquals = ""
-    }
-  }
-}
-
-# {
-#       "Condition": {
-#         "StringEquals": {
-#           "ec2:Subnet": [
-#             "${aws_subnet.example1.arn}",
-#             "${aws_subnet.example2.arn}"
-#           ],
-#           "ec2:AuthorizedService": "codebuild.amazonaws.com"
-#         }
-#       }
-# }
