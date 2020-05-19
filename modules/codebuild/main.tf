@@ -34,6 +34,10 @@ resource "aws_codebuild_project" "build" {
       fetch_submodules = true
     }
     report_build_status = true
+    auth {
+      type     = "OAUTH"
+      resource = "${aws_codebuild_source_credential.credential.arn}"
+    }
   }
 
   source_version = "dev"
