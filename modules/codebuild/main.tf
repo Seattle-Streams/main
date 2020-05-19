@@ -1,7 +1,7 @@
 resource "aws_codebuild_project" "build" {
   name         = "${var.name}"
   description  = "${var.description}"
-  service_role = "${aws_iam_role.codebuild_execution_role.arn}"
+  service_role = "${module.codebuild_execution_role.arn}"
 
   artifacts {
     type      = "S3"
@@ -70,21 +70,11 @@ resource "aws_codebuild_source_credential" "credential" {
   token       = "${var.token}"
 }
 
-resource "aws_iam_role" "codebuild_execution_role" {
-  name = "${var.name}_role"
+module "codebuild_execution_role" {
+  source = "../iam_role"
 
-  assume_role_policy = "${data.aws_iam_policy_document.codebuild_execution_policy.json}"
-}
-
-data "aws_iam_policy_document" "codebuild_execution_policy" {
-  statement {
-    effect = "Allow"
-    principals {
-      type        = "Service"
-      identifiers = ["codebuild.amazonaws.com"]
-    }
-    actions = ["sts:AssumeRole"]
-  }
+  name        = "${var.name}"
+  identifiers = "codebuild.amazonaws.com"
 }
 
 module "codebuild_logs" {
@@ -136,21 +126,21 @@ module "update_lambda" {
 }
 
 resource "aws_iam_role_policy_attachment" "codebuild_s3_attachment" {
-  role       = "${aws_iam_role.codebuild_execution_role.name}"
+  role       = "${module.codebuild_execution_role.name}"
   policy_arn = "${module.codebuild_s3_access.arn}"
 }
 
 resource "aws_iam_role_policy_attachment" "codebuild_lambda_attachment" {
-  role       = "${aws_iam_role.codebuild_execution_role.name}"
+  role       = "${module.codebuild_execution_role.name}"
   policy_arn = "${module.update_lambda.arn}"
 }
 
 resource "aws_iam_role_policy_attachment" "codebuild_logs_attachment" {
-  role       = "${aws_iam_role.codebuild_execution_role.name}"
+  role       = "${module.codebuild_execution_role.name}"
   policy_arn = "${module.codebuild_logs.arn}"
 }
 
 resource "aws_iam_role_policy_attachment" "codebuild_ec2_attachment" {
-  role       = "${aws_iam_role.codebuild_execution_role.name}"
+  role       = "${module.codebuild_execution_role.name}"
   policy_arn = "${module.codebuild_ec2_policies.arn}"
 }
