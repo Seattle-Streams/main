@@ -76,7 +76,7 @@ resource "aws_iam_role" "codebuild_execution_role" {
   assume_role_policy = "${data.aws_iam_policy_document.codebuild_execution_role.json}"
 }
 
-data "aws_iam_policy_document" "codebuild_execution_role" {
+data "aws_iam_policy_document" "codebuild_execution_policy" {
   statement {
     effect = "Allow"
     principals {
@@ -125,3 +125,22 @@ module "codebuild_s3_access" {
   resources   = "${var.process_messages_bucket_arn}/*"
 }
 
+module "update_lambda" {
+  source = "../policies"
+
+  actions     = ["lambda:UpdateFunctionCode", "lambda:PublishVersion", "lambda:UpdateAlias"]
+  description = "IAM policy for updating lambda function code"
+  effect      = "Allow"
+  name        = "codebuild_update_lambda"
+  resources   = "arn:aws:lambda:${var.region}:${var.account_id}:function:*"
+}
+
+resource "aws_iam_role_policy_attachment" "worker_s3_attachment" {
+  role       = "${aws_iam_role.codebuild_execution_role.name}"
+  policy_arn = "${module.codebuild_s3_access.arn}"
+}
+
+resource "aws_iam_role_policy_attachment" "worker_lambda_attachment" {
+  role       = "${aws_iam_role.codebuild_execution_role.name}"
+  policy_arn = "${module.update_lambda.arn}"
+}
