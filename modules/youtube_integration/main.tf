@@ -4,7 +4,7 @@ resource "aws_lambda_function" "youtube_lambda" {
   s3_bucket = "${var.bucket_id}"
   s3_key    = "${var.s3_key}"
 
-  role    = "${aws_iam_role.youtube_lambda_execution_role.arn}"
+  role    = "${module.youtube_lambda_execution_role.arn}"
   handler = "Integration.ProcessMessage"
   runtime = "${var.runtime}"
   timeout = "${var.timeout}"
