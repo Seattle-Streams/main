@@ -1,60 +1,60 @@
-# resource "aws_lambda_function" "twilio_lambda" {
-#   function_name = "twilio_lambda"
+resource "aws_lambda_function" "twilio_lambda" {
+  function_name = "twilio_lambda"
 
-#   s3_bucket = "${var.bucket_id}"
-#   s3_key    = "${var.s3_key}"
+  s3_bucket = "${var.bucket_id}"
+  s3_key    = "${var.s3_key}"
 
-#   role    = "${aws_iam_role.twilio_lambda_execution_role.arn}"
-#   handler = "Integration.ProcessMessage"
-#   runtime = "${var.runtime}"
-#   timeout = "${var.timeout}"
-#   environment {
-#     variables = {
-#       SQS_URL = "${var.queue_id}"
-#     }
-#   }
-#   depends_on = [
-#     "aws_iam_role_policy_attachment.lambda_logs",
-#   ]
-# }
-
-module "twilio_lambda" {
-  source = "../lambda"
-
-  dependencies = "aws_iam_role_policy_attachment.lambda_logs"
-  handler      = "Integration.ProcessMessage"
-  name         = "twilio_lambda"
-  runtime      = "${var.runtime}"
-  s3_bucket    = "${var.bucket_id}"
-  s3_key       = "${var.s3_key}"
-  timeout      = "${var.timeout}"
-  env_one      = "${var.queue_id}"
-  env_two      = ""
-  env_three    = ""
+  role    = "${aws_iam_role.twilio_lambda_execution_role.arn}"
+  handler = "Integration.ProcessMessage"
+  runtime = "${var.runtime}"
+  timeout = "${var.timeout}"
+  environment {
+    variables = {
+      SQS_URL = "${var.queue_id}"
+    }
+  }
+  depends_on = [
+    "aws_iam_role_policy_attachment.lambda_logs",
+  ]
 }
+
+# module "twilio_lambda" {
+#   source = "../lambda"
+
+#   dependencies = "aws_iam_role_policy_attachment.lambda_logs"
+#   handler      = "Integration.ProcessMessage"
+#   name         = "twilio_lambda"
+#   runtime      = "${var.runtime}"
+#   s3_bucket    = "${var.bucket_id}"
+#   s3_key       = "${var.s3_key}"
+#   timeout      = "${var.timeout}"
+#   env_one      = "${var.queue_id}"
+#   env_two      = ""
+#   env_three    = ""
+# }
 
 
 ####################################################################################################
 ##########################         Lambda Policies         #########################################
 ####################################################################################################
 
-# resource "aws_iam_role" "twilio_lambda_execution_role" {
-#   name               = "twilio_lambda_execution_role"
-#   assume_role_policy = "${data.aws_iam_policy_document.lambda_policy.json}"
-# }
+resource "aws_iam_role" "twilio_lambda_execution_role" {
+  name               = "twilio_lambda_execution_role"
+  assume_role_policy = "${data.aws_iam_policy_document.lambda_policy.json}"
+}
 
-# data "aws_iam_policy_document" "lambda_policy" {
-#   statement {
-#     effect = "Allow"
+data "aws_iam_policy_document" "lambda_policy" {
+  statement {
+    effect = "Allow"
 
-#     principals {
-#       identifiers = ["lambda.amazonaws.com"]
-#       type        = "Service"
-#     }
+    principals {
+      identifiers = ["lambda.amazonaws.com"]
+      type        = "Service"
+    }
 
-#     actions = ["sts:AssumeRole", ]
-#   }
-# }
+    actions = ["sts:AssumeRole", ]
+  }
+}
 
 # This is to manage the CloudWatch Log Group for the Lambda Function.
 resource "aws_cloudwatch_log_group" "twilio_lambda_log_group" {
