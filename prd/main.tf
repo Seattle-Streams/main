@@ -136,7 +136,7 @@ module "jenkins_build_server" {
 module "twilio_codebuild_project" {
   source = "../modules/codebuild"
 
-  account_id                  = "${data.aws_caller_identity.current}"
+  account_id                  = "${data.aws_caller_identity.current.account_id}"
   bucket_name                 = "${module.process_messages_bucket.id}"
   bucket_path                 = "twilio"
   build_path                  = "lambda/twilio"
