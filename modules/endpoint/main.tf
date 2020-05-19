@@ -1,6 +1,6 @@
 # This is what creates the endpoint & path
 resource "aws_api_gateway_resource" "resource" {
-  path_part   = "process-message"
+  path_part   = "${var.path_part}"
   parent_id   = "${var.api_root_resource_id}"
   rest_api_id = "${var.api_id}"
 }
