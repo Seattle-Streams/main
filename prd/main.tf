@@ -34,11 +34,22 @@ module "messages_api" {
 module "process_messages_endpoint" {
   source = "../modules/endpoint"
 
+  path_part            = "process-message"
   api_root_resource_id = "${module.messages_api.api_root_resource_id}"
   api_id               = "${module.messages_api.api_id}"
   http_method          = "${var.process_message_method}"
   authorization        = "NONE"
 }
+
+# module "auth_endpoint" {
+#   source = "../modules/endpoint"
+
+#   path_part            = "auth"
+#   api_root_resource_id = "${module.messages_api.api_root_resource_id}"
+#   api_id               = "${module.messages_api.api_id}"
+#   http_method          = "POST"
+#   authorization        = "NONE"
+# }
 
 # Use this to get account id
 data "aws_caller_identity" "current" {}
