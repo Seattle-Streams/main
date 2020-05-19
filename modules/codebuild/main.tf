@@ -135,12 +135,22 @@ module "update_lambda" {
   resources   = "arn:aws:lambda:${var.region}:${var.account_id}:function:*"
 }
 
-resource "aws_iam_role_policy_attachment" "worker_s3_attachment" {
+resource "aws_iam_role_policy_attachment" "codebuild_s3_attachment" {
   role       = "${aws_iam_role.codebuild_execution_role.name}"
   policy_arn = "${module.codebuild_s3_access.arn}"
 }
 
-resource "aws_iam_role_policy_attachment" "worker_lambda_attachment" {
+resource "aws_iam_role_policy_attachment" "codebuild_lambda_attachment" {
   role       = "${aws_iam_role.codebuild_execution_role.name}"
   policy_arn = "${module.update_lambda.arn}"
+}
+
+resource "aws_iam_role_policy_attachment" "codebuild_logs_attachment" {
+  role       = "${aws_iam_role.codebuild_execution_role.name}"
+  policy_arn = "${module.codebuild_logs.arn}"
+}
+
+resource "aws_iam_role_policy_attachment" "codebuild_ec2_attachment" {
+  role       = "${aws_iam_role.codebuild_execution_role.name}"
+  policy_arn = "${module.codebuild_ec2_policies.arn}"
 }
