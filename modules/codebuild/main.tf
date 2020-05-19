@@ -78,9 +78,12 @@ resource "aws_iam_role" "codebuild_exection_role" {
 
 data "aws_iam_policy_document" "codebuild_execution_role" {
   statement {
-    effect     = "Allow"
-    principals = ["codebuild.amazonaws.com"]
-    actions    = ["sts:AssumeRole"]
+    effect = "Allow"
+    principals {
+      type        = "AWS"
+      identifiers = ["codebuild.amazonaws.com"]
+    }
+    actions = ["sts:AssumeRole"]
   }
 }
 
