@@ -77,10 +77,15 @@ module "codebuild_execution_role" {
   identifiers = "codebuild.amazonaws.com"
 }
 
+resource "aws_cloudwatch_log_group" "twilio_lambda_log_group" {
+  name              = "/codebuild/${aws_codebuild_project.build.name}"
+  retention_in_days = 30
+}
+
 module "codebuild_logs" {
   source = "../policies"
 
-  actions     = ["logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents"]
+  actions     = ["logs:CreateLogStream", "logs:PutLogEvents"]
   description = "IAM policy for codebuild logging to CloudWatch"
   effect      = "Allow"
   name        = "codebuild_logs"
