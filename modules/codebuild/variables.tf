@@ -12,6 +12,8 @@ variable "environment" {}
 
 variable "name" {}
 
+variable "process_messages_bucket_arn" {}
+
 variable "region" {}
 
 variable "source_url" {}

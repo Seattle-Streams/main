@@ -122,6 +122,6 @@ module "codebuild_s3_access" {
   description = "IAM policy for codebuild accessing to S3"
   effect      = "Allow"
   name        = "codebuild_s3_access"
-  resources   = "${aws_s3_bucket.example.arn}/*"
+  resources   = "${var.process_messages_bucket_arn}/*"
 }
 
