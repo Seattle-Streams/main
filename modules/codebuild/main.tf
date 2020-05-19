@@ -73,7 +73,7 @@ resource "aws_codebuild_source_credential" "credential" {
 resource "aws_iam_role" "codebuild_execution_role" {
   name = "${var.name}_role"
 
-  assume_role_policy = "${data.aws_iam_policy_document.codebuild_execution_role.json}"
+  assume_role_policy = "${data.aws_iam_policy_document.codebuild_execution_policy.json}"
 }
 
 data "aws_iam_policy_document" "codebuild_execution_policy" {
