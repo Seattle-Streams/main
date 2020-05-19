@@ -38,22 +38,11 @@ resource "aws_lambda_function" "twilio_lambda" {
 ##########################         Lambda Policies         #########################################
 ####################################################################################################
 
-resource "aws_iam_role" "twilio_lambda_execution_role" {
-  name               = "twilio_lambda_execution_role"
-  assume_role_policy = "${data.aws_iam_policy_document.lambda_policy.json}"
-}
+module "twilio_lambda_execution_role" {
+  source = "../iam_role"
 
-data "aws_iam_policy_document" "lambda_policy" {
-  statement {
-    effect = "Allow"
-
-    principals {
-      identifiers = ["lambda.amazonaws.com"]
-      type        = "Service"
-    }
-
-    actions = ["sts:AssumeRole", ]
-  }
+  name        = "twilio_lambda"
+  identifiers = "lambda.amazonaws.com"
 }
 
 # This is to manage the CloudWatch Log Group for the Lambda Function.
@@ -85,11 +74,11 @@ module "lambda_sending" {
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
-  role       = "${aws_iam_role.twilio_lambda_execution_role.name}"
+  role       = "${module.twilio_lambda_execution_role.name}"
   policy_arn = "${module.twilio_lambda_logging.arn}"
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_send" {
-  role       = "${aws_iam_role.twilio_lambda_execution_role.name}"
+  role       = "${module.twilio_lambda_execution_role.name}"
   policy_arn = "${module.lambda_sending.arn}"
 }

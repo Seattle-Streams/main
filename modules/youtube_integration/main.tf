@@ -25,24 +25,12 @@ resource "aws_lambda_function" "youtube_lambda" {
 ##########################         Lambda Policies         #########################################
 ####################################################################################################
 
-resource "aws_iam_role" "youtube_lambda_execution_role" {
-  name               = "youtube_lambda_execution_role"
-  assume_role_policy = "${data.aws_iam_policy_document.lambda_policy.json}"
+module "youtube_lambda_execution_role" {
+  source = "../iam_role"
+
+  name        = "youtube_lambda"
+  identifiers = "lambda.amazonaws.com"
 }
-
-data "aws_iam_policy_document" "lambda_policy" {
-  statement {
-    effect = "Allow"
-
-    principals {
-      identifiers = ["lambda.amazonaws.com"]
-      type        = "Service"
-    }
-
-    actions = ["sts:AssumeRole", ]
-  }
-}
-
 # This is to manage the CloudWatch Log Group for the Lambda Function.
 resource "aws_cloudwatch_log_group" "youtube_lambda_log_group" {
   name              = "/aws/lambda/${aws_lambda_function.youtube_lambda.function_name}"
@@ -92,22 +80,22 @@ module "lambda_accessing_s3" {
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_receive" {
-  role       = "${aws_iam_role.youtube_lambda_execution_role.name}"
+  role       = "${module.youtube_lambda_execution_role.name}"
   policy_arn = "${module.lambda_receiving.arn}"
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_access_s3" {
-  role       = "${aws_iam_role.youtube_lambda_execution_role.name}"
+  role       = "${module.youtube_lambda_execution_role.name}"
   policy_arn = "${module.lambda_accessing_s3.arn}"
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_access_dynamo" {
-  role       = "${aws_iam_role.youtube_lambda_execution_role.name}"
+  role       = "${module.youtube_lambda_execution_role.name}"
   policy_arn = "${module.accessing_dynamo.arn}"
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
-  role       = "${aws_iam_role.youtube_lambda_execution_role.name}"
+  role       = "${module.youtube_lambda_execution_role.name}"
   policy_arn = "${module.youtube_lambda_logging.arn}"
 }
 
