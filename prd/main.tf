@@ -133,6 +133,7 @@ module "jenkins_build_server" {
   region                      = "${var.region}"
 }
 
+# Build pipelines for lambdas
 module "twilio_codebuild_project" {
   source = "../modules/codebuild"
 

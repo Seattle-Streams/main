@@ -81,7 +81,7 @@ module "codebuild_execution_role" {
   identifiers = "codebuild.amazonaws.com"
 }
 
-resource "aws_cloudwatch_log_group" "twilio_lambda_log_group" {
+resource "aws_cloudwatch_log_group" "codebuild_log_group" {
   name              = "/codebuild/${aws_codebuild_project.build.name}"
   retention_in_days = 30
 }
@@ -92,7 +92,7 @@ module "codebuild_logs" {
   actions     = ["logs:CreateLogStream", "logs:PutLogEvents"]
   description = "IAM policy for codebuild logging to CloudWatch"
   effect      = "Allow"
-  name        = "codebuild_logs"
+  name        = "${var.name}_codebuild_logs"
   resources   = "arn:aws:logs:${var.region}:${var.account_id}:*"
 }
 
@@ -110,7 +110,7 @@ module "codebuild_ec2_policies" {
   ]
   description = "IAM policy for codebuild managing ec2 properties"
   effect      = "Allow"
-  name        = "codebuild_ec2_policies"
+  name        = "${var.name}_codebuild_ec2_policies"
   resources   = "arn:aws:ec2:${var.region}:${var.account_id}:*"
 }
 
@@ -120,7 +120,7 @@ module "codebuild_s3_access" {
   actions     = ["s3:PutObject", "s3:GetObject"]
   description = "IAM policy for codebuild accessing to S3"
   effect      = "Allow"
-  name        = "codebuild_s3_access"
+  name        = "${var.name}_codebuild_s3_access"
   resources   = "${var.process_messages_bucket_arn}/*"
 }
 
@@ -130,7 +130,7 @@ module "update_lambda" {
   actions     = ["lambda:UpdateFunctionCode", "lambda:PublishVersion", "lambda:UpdateAlias"]
   description = "IAM policy for updating lambda function code"
   effect      = "Allow"
-  name        = "codebuild_update_lambda"
+  name        = "${var.name}_codebuild_update_lambda"
   resources   = "arn:aws:lambda:${var.region}:${var.account_id}:function:*"
 }
 
