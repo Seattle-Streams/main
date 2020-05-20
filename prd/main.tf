@@ -37,7 +37,7 @@ module "process_messages_endpoint" {
   path_part            = "process-message"
   api_root_resource_id = "${module.messages_api.api_root_resource_id}"
   api_id               = "${module.messages_api.api_id}"
-  http_method          = "${var.process_message_method}"
+  http_method          = "POST"
   authorization        = "NONE"
 }
 
@@ -59,7 +59,7 @@ module "process_messages_proxy" {
 
   account_id                  = "${data.aws_caller_identity.current.account_id}"
   api_id                      = "${module.messages_api.api_id}"
-  endpoint_http_method        = "${var.process_message_method}"
+  endpoint_http_method        = "POST"
   endpoint_resource_id        = "${module.process_messages_endpoint.endpoint_resource_id}"
   region                      = "${var.region}"
   resource_path               = "${module.process_messages_endpoint.resource_path}"
@@ -75,9 +75,9 @@ module "twilio_integration" {
   queue_arn  = "${module.sms_queue.arn}"
   queue_id   = "${module.sms_queue.id}"
   region     = "${var.region}"
-  runtime    = "${var.runtime}"
+  runtime    = "python3.8"
   s3_key     = "twilio/Integration.zip"
-  timeout    = "${var.timeout}"
+  timeout    = "10"
 }
 
 # Bucket for process messages service
@@ -106,10 +106,10 @@ module "youtube_integration" {
   bucket_id  = "${module.process_messages_bucket.id}"
   queue_arn  = "${module.sms_queue.arn}"
   region     = "${var.region}"
-  runtime    = "${var.runtime}"
+  runtime    = "python3.8"
   s3_key     = "youtube/Integration.zip"
   table_name = "${module.user_table.id}"
-  timeout    = "${var.timeout}"
+  timeout    = "10"
 }
 
 # DynamoDB table associating customers w/ 3rd party accounts req'd for integrations
