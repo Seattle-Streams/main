@@ -27,7 +27,7 @@ resource "aws_codebuild_project" "build" {
   source {
     type            = "GITHUB"
     buildspec       = "${var.build_path}/buildspec.yml"
-    location        = "${var.source_url}" //https://github.com/Seattle-Streams/python.git
+    location        = "${var.source_url}"
     git_clone_depth = 1
 
     git_submodules_config {
