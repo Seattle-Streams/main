@@ -112,6 +112,20 @@ module "youtube_integration" {
   timeout    = "10"
 }
 
+module "google_auth" {
+  source = "../modules/google_auth"
+
+  account_id = "${data.aws_caller_identity.current.account_id}"
+  bucket_arn = "${module.auth_bucket.arn}"
+  bucket_id  = "${module.auth_bucket.id}"
+  handler    = "Auth.AuthorizeGoogleUser"
+  region     = "${var.region}"
+  runtime    = "python3.8"
+  s3_key     = "google-auth/Auth.zip"
+  table_name = "${module.user_table.id}"
+  timeout    = "10"
+}
+
 # DynamoDB table associating customers w/ 3rd party accounts req'd for integrations
 module "user_table" {
   source = "../modules/dynamodb"
