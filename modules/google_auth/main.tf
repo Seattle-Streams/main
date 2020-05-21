@@ -4,7 +4,7 @@ resource "aws_lambda_function" "google_auth_lambda" {
   s3_bucket = "${var.bucket_id}"
   s3_key    = "${var.s3_key}"
 
-  role    = "${module.twilio_lambda_execution_role.arn}"
+  role    = "${module.google_auth_lambda_execution_role.arn}"
   handler = "${var.handler}"
   runtime = "${var.runtime}"
   timeout = "${var.timeout}"
@@ -71,7 +71,7 @@ module "lambda_accessing_s3" {
 
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
   role       = "${module.google_auth_lambda_execution_role.name}"
-  policy_arn = "${module.twilio_lambda_logging.arn}"
+  policy_arn = "${module.google_auth_lambda_logging.arn}"
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_access_dynamo" {
