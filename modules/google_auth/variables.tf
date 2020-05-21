@@ -1,6 +1,8 @@
 variable "account_id" {}
 variable "bucket_id" {}
 
+variable "handler" {}
+
 variable "queue_arn" {
   description = "ARN of the queue used to send messages to"
 }

@@ -5,7 +5,7 @@ resource "aws_lambda_function" "google_auth_lambda" {
   s3_key    = "${var.s3_key}"
 
   role    = "${module.twilio_lambda_execution_role.arn}"
-  handler = "Integration.ProcessMessage"
+  handler = "${var.handler}"
   runtime = "${var.runtime}"
   timeout = "${var.timeout}"
   environment {
