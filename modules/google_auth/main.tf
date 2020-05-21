@@ -52,7 +52,7 @@ module "accessing_dynamo" {
   source = "../policies"
 
   #   "dynamodb:PutItem" allows you to create new items
-  actions     = ["dynamodb:GetItem", ]
+  actions     = ["dynamodb:PutItem", ]
   description = "IAM policy for reading items from dynamo"
   effect      = "Allow"
   name        = "google_auth_accessing_dynamo"
