@@ -123,6 +123,16 @@ module "user_table" {
   table_name         = "user"
 }
 
+# Bucket for process messages service
+module "auth_bucket" {
+  source = "../modules/s3"
+
+  acl         = "private"
+  bucket_name = "auth-resources"
+  tag_name    = "auth-resources"
+  environment = "${local.environment}"
+}
+
 # Jenkins build server builds lambda function code
 module "jenkins_build_server" {
   source = "../modules/build_server"
@@ -165,3 +175,19 @@ module "youtube_codebuild_project" {
   source_url                  = "https://github.com/Seattle-Streams/python.git"
   token                       = "${var.codebuild_github_token}"
 }
+
+# module "google_auth_codebuild_project" {
+#   source = "../modules/codebuild"
+
+#   account_id                  = "${data.aws_caller_identity.current.account_id}"
+#   bucket_name                 = "${module.auth_bucket.id}"
+#   bucket_path                 = "google"
+#   build_path                  = "lambda/google-auth"
+#   description                 = "Build project for the google authentication lambda function"
+#   environment                 = "${local.environment}"
+#   name                        = "google_auth_build"
+#   process_messages_bucket_arn = "${module.auth_bucket.arn}"
+#   region                      = "${var.region}"
+#   source_url                  = "https://github.com/Seattle-Streams/python.git"
+#   token                       = "${var.codebuild_github_token}"
+# }
