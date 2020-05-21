@@ -1,11 +1,11 @@
-# Links API Gateway to Twilio Lambda
+# Links API Gateway to Lambda
 resource "aws_api_gateway_integration" "lambda_integration" {
   rest_api_id             = "${var.api_id}"
   resource_id             = "${var.endpoint_resource_id}"
   http_method             = "${var.endpoint_http_method}"
   integration_http_method = "${var.endpoint_http_method}"
   type                    = "AWS_PROXY"
-  uri                     = "${var.twilio_lambda_invoke_arn}"
+  uri                     = "${var.lambda_invoke_arn}"
 }
 
 # This is used to get the account_id required for the lambda invokation permission below
@@ -16,7 +16,7 @@ resource "aws_api_gateway_integration" "lambda_integration" {
 resource "aws_lambda_permission" "apigw_lambda" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
-  function_name = "${var.twilio_lambda_function_name}"
+  function_name = "${var.lambda_function_name}"
   principal     = "apigateway.amazonaws.com"
 
   # More: http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-control-access-using-iam-policies-to-invoke-api.html

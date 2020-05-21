@@ -9,6 +9,6 @@ variable "region" {}
 
 variable "resource_path" {}
 
-variable "twilio_lambda_function_name" {}
-variable "twilio_lambda_invoke_arn" {}
+variable "lambda_function_name" {}
+variable "lambda_invoke_arn" {}
 
