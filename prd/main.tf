@@ -92,7 +92,7 @@ module "process_messages_bucket" {
 
 # Queue for the process messages service
 module "sms_queue" {
-  source = "../modules/queue"
+  source = "../modules/sqs"
 
   Name        = "sms_queue"
   Environment = "${local.environment}"
