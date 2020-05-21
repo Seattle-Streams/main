@@ -5,10 +5,6 @@ variable "bucket_arn" {}
 
 variable "handler" {}
 
-variable "queue_arn" {
-  description = "ARN of the queue used to send messages to"
-}
-
 variable "region" {}
 variable "runtime" {
   description = "Python runtime of youtube integration service"
