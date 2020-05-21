@@ -70,16 +70,16 @@ module "lambda_accessing_s3" {
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
-  role       = "${module.twilio_lambda_execution_role.name}"
+  role       = "${module.google_auth_lambda_execution_role.name}"
   policy_arn = "${module.twilio_lambda_logging.arn}"
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_access_dynamo" {
-  role       = "${module.youtube_lambda_execution_role.name}"
+  role       = "${module.google_auth_lambda_execution_role.name}"
   policy_arn = "${module.accessing_dynamo.arn}"
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_access_s3" {
-  role       = "${module.youtube_lambda_execution_role.name}"
+  role       = "${module.google_auth_lambda_execution_role.name}"
   policy_arn = "${module.lambda_accessing_s3.arn}"
 }
