@@ -18,22 +18,6 @@ resource "aws_lambda_function" "twilio_lambda" {
   ]
 }
 
-# module "twilio_lambda" {
-#   source = "../lambda"
-
-#   dependencies = "aws_iam_role_policy_attachment.lambda_logs"
-#   handler      = "Integration.ProcessMessage"
-#   name         = "twilio_lambda"
-#   runtime      = "${var.runtime}"
-#   s3_bucket    = "${var.bucket_id}"
-#   s3_key       = "${var.s3_key}"
-#   timeout      = "${var.timeout}"
-#   env_one      = "${var.queue_id}"
-#   env_two      = ""
-#   env_three    = ""
-# }
-
-
 ####################################################################################################
 ##########################         Lambda Policies         #########################################
 ####################################################################################################

@@ -94,8 +94,12 @@ module "process_messages_bucket" {
 module "sms_queue" {
   source = "../modules/sqs"
 
-  Name        = "sms_queue"
-  Environment = "${local.environment}"
+  Name                      = "sms_queue"
+  delay_seconds             = 0
+  max_message_size          = 2048
+  message_retention_seconds = 3600
+  Environment               = "${local.environment}"
+  receive_wait_time_seconds = 0
 }
 
 module "youtube_integration" {
