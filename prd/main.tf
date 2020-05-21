@@ -57,14 +57,14 @@ data "aws_caller_identity" "current" {}
 module "process_messages_proxy" {
   source = "../modules/lambda_proxy"
 
-  account_id                  = "${data.aws_caller_identity.current.account_id}"
-  api_id                      = "${module.messages_api.api_id}"
-  endpoint_http_method        = "POST"
-  endpoint_resource_id        = "${module.process_messages_endpoint.endpoint_resource_id}"
-  region                      = "${var.region}"
-  resource_path               = "${module.process_messages_endpoint.resource_path}"
-  twilio_lambda_function_name = "${module.twilio_integration.lambda_function_name}"
-  twilio_lambda_invoke_arn    = "${module.twilio_integration.lambda_invoke_arn}"
+  account_id           = "${data.aws_caller_identity.current.account_id}"
+  api_id               = "${module.messages_api.api_id}"
+  endpoint_http_method = "POST"
+  endpoint_resource_id = "${module.process_messages_endpoint.endpoint_resource_id}"
+  region               = "${var.region}"
+  resource_path        = "${module.process_messages_endpoint.resource_path}"
+  lambda_function_name = "${module.twilio_integration.lambda_function_name}"
+  lambda_invoke_arn    = "${module.twilio_integration.lambda_invoke_arn}"
 }
 
 module "twilio_integration" {
@@ -124,6 +124,20 @@ module "google_auth" {
   s3_key     = "google-auth/Auth.zip"
   table_name = "${module.user_table.id}"
   timeout    = "10"
+}
+
+
+module "google_auth_proxy" {
+  source = "../modules/lambda_proxy"
+
+  account_id                  = "${data.aws_caller_identity.current.account_id}"
+  api_id                      = "${module.messages_api.api_id}"
+  endpoint_http_method        = "POST"
+  endpoint_resource_id        = "${module.auth_endpoint.endpoint_resource_id}"
+  region                      = "${var.region}"
+  resource_path               = "${module.auth_endpoint.resource_path}"
+  twilio_lambda_function_name = "${module.google_auth.lambda_function_name}"
+  twilio_lambda_invoke_arn    = "${module.google_auth.lambda_invoke_arn}"
 }
 
 # DynamoDB table associating customers w/ 3rd party accounts req'd for integrations
