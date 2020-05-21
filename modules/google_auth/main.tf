@@ -52,7 +52,7 @@ module "accessing_dynamo" {
   source = "../policies"
 
   #   "dynamodb:PutItem" allows you to create new items
-  actions     = ["dynamodb:PutItem", ]
+  actions     = ["dynamodb:PutItem", "dynamodb:UpdateItem"]
   description = "IAM policy for reading items from dynamo"
   effect      = "Allow"
   name        = "google_auth_accessing_dynamo"
@@ -62,7 +62,7 @@ module "accessing_dynamo" {
 module "lambda_accessing_s3" {
   source = "../policies"
 
-  actions     = ["s3:PutObject", "s3:GetObject"]
+  actions     = ["s3:GetObject"]
   description = "IAM policy for lambda reading files from s3"
   effect      = "Allow"
   name        = "google_auth_lambda_accessing_s3"
