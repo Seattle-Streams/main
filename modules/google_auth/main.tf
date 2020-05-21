@@ -8,9 +8,10 @@ resource "aws_lambda_function" "google_auth_lambda" {
   handler = "${var.handler}"
   runtime = "${var.runtime}"
   timeout = "${var.timeout}"
+
   environment {
     variables = {
-      KEY = "${var.value}"
+      BUCKET_NAME = "${var.bucket_id}"
     }
   }
   depends_on = [
@@ -47,7 +48,38 @@ module "google_auth_lambda_logging" {
   resources   = "arn:aws:logs:${var.region}:${var.account_id}:*"
 }
 
+module "accessing_dynamo" {
+  source = "../policies"
+
+  #   "dynamodb:PutItem" allows you to create new items
+  actions     = ["dynamodb:GetItem", ]
+  description = "IAM policy for reading items from dynamo"
+  effect      = "Allow"
+  name        = "google_auth_accessing_dynamo"
+  resources   = "arn:aws:dynamodb:${var.region}:${var.account_id}:table/${var.table_name}"
+}
+
+module "lambda_accessing_s3" {
+  source = "../policies"
+
+  actions     = ["s3:PutObject", "s3:GetObject"]
+  description = "IAM policy for lambda reading files from s3"
+  effect      = "Allow"
+  name        = "google_auth_lambda_accessing_s3"
+  resources   = "${var.bucket_arn}/*"
+}
+
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
   role       = "${module.twilio_lambda_execution_role.name}"
   policy_arn = "${module.twilio_lambda_logging.arn}"
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_access_dynamo" {
+  role       = "${module.youtube_lambda_execution_role.name}"
+  policy_arn = "${module.accessing_dynamo.arn}"
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_access_s3" {
+  role       = "${module.youtube_lambda_execution_role.name}"
+  policy_arn = "${module.lambda_accessing_s3.arn}"
 }
