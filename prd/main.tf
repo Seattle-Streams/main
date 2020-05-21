@@ -142,7 +142,7 @@ module "google_auth_proxy" {
 
 # DynamoDB table associating customers w/ 3rd party accounts req'd for integrations
 module "user_table" {
-  source = "../modules/dynamodb"
+  source = "../modules/dynamodb_table"
 
   billing_mode       = "PAY_PER_REQUEST"
   hash_key_attr      = "Email"
