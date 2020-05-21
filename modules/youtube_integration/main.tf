@@ -39,7 +39,7 @@ resource "aws_cloudwatch_log_group" "youtube_lambda_log_group" {
 
 # See also the following AWS managed policy: AWSLambdaBasicExecutionRole
 module "youtube_lambda_logging" {
-  source = "../policies"
+  source = "../iam_policy"
 
   actions     = ["logs:CreateLogStream", "logs:PutLogEvents"]
   description = "IAM policy for lambda logging to CloudWatch"
@@ -49,7 +49,7 @@ module "youtube_lambda_logging" {
 }
 
 module "lambda_receiving" {
-  source = "../policies"
+  source = "../iam_policy"
 
   actions     = ["sqs:ReceiveMessage", "sqs:DeleteMessage", "sqs:GetQueueAttributes"]
   description = "IAM policy for lambda receiving messages from sqs"
@@ -59,7 +59,7 @@ module "lambda_receiving" {
 }
 
 module "accessing_dynamo" {
-  source = "../policies"
+  source = "../iam_policy"
 
   #   "dynamodb:PutItem" allows you to create new items
   actions     = ["dynamodb:GetItem", ]
@@ -70,7 +70,7 @@ module "accessing_dynamo" {
 }
 
 module "lambda_accessing_s3" {
-  source = "../policies"
+  source = "../iam_policy"
 
   actions     = ["s3:PutObject", "s3:GetObject"]
   description = "IAM policy for lambda reading files from s3"

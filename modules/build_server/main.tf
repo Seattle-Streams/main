@@ -104,7 +104,7 @@ data "aws_iam_policy_document" "worker_execution" {
 }
 
 module "ec2_accessing_s3" {
-  source = "../policies"
+  source = "../iam_policy"
 
   actions     = ["s3:PutObject", "s3:GetObject"]
   description = "IAM policy for ec2 reading and writing files from s3"
@@ -114,7 +114,7 @@ module "ec2_accessing_s3" {
 }
 
 module "update_lambda" {
-  source = "../policies"
+  source = "../iam_policy"
 
   actions     = ["lambda:UpdateFunctionCode", "lambda:PublishVersion", "lambda:UpdateAlias"]
   description = "IAM policy for updating lambda function code"

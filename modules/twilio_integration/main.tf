@@ -54,7 +54,7 @@ resource "aws_cloudwatch_log_group" "twilio_lambda_log_group" {
 
 # See also the following AWS managed policy: AWSLambdaBasicExecutionRole
 module "twilio_lambda_logging" {
-  source = "../policies"
+  source = "../iam_policy"
 
   actions     = ["logs:CreateLogStream", "logs:PutLogEvents"]
   description = "IAM policy for lambda logging to CloudWatch"
@@ -64,7 +64,7 @@ module "twilio_lambda_logging" {
 }
 
 module "lambda_sending" {
-  source = "../policies"
+  source = "../iam_policy"
 
   actions     = ["sqs:SendMessage"]
   description = "IAM policy for sending to sqs from a lambda"

@@ -87,7 +87,7 @@ resource "aws_cloudwatch_log_group" "codebuild_log_group" {
 }
 
 module "codebuild_logs" {
-  source = "../policies"
+  source = "../iam_policy"
 
   actions     = ["logs:CreateLogStream", "logs:PutLogEvents"]
   description = "IAM policy for codebuild logging to CloudWatch"
@@ -97,7 +97,7 @@ module "codebuild_logs" {
 }
 
 module "codebuild_ec2_policies" {
-  source = "../policies"
+  source = "../iam_policy"
 
   actions = [
     "ec2:CreateNetworkInterface",
@@ -115,7 +115,7 @@ module "codebuild_ec2_policies" {
 }
 
 module "codebuild_s3_access" {
-  source = "../policies"
+  source = "../iam_policy"
 
   actions     = ["s3:PutObject", "s3:GetObject"]
   description = "IAM policy for codebuild accessing to S3"
@@ -125,7 +125,7 @@ module "codebuild_s3_access" {
 }
 
 module "update_lambda" {
-  source = "../policies"
+  source = "../iam_policy"
 
   actions     = ["lambda:UpdateFunctionCode", "lambda:PublishVersion", "lambda:UpdateAlias"]
   description = "IAM policy for updating lambda function code"

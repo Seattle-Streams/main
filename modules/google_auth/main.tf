@@ -39,7 +39,7 @@ resource "aws_cloudwatch_log_group" "google_auth_lambda_log_group" {
 
 # See also the following AWS managed policy: AWSLambdaBasicExecutionRole
 module "google_auth_lambda_logging" {
-  source = "../policies"
+  source = "../iam_policy"
 
   actions     = ["logs:CreateLogStream", "logs:PutLogEvents"]
   description = "IAM policy for lambda logging to CloudWatch"
@@ -49,7 +49,7 @@ module "google_auth_lambda_logging" {
 }
 
 module "accessing_dynamo" {
-  source = "../policies"
+  source = "../iam_policy"
 
   #   "dynamodb:PutItem" allows you to create new items
   actions     = ["dynamodb:PutItem", "dynamodb:UpdateItem"]
@@ -60,7 +60,7 @@ module "accessing_dynamo" {
 }
 
 module "lambda_accessing_s3" {
-  source = "../policies"
+  source = "../iam_policy"
 
   actions     = ["s3:GetObject"]
   description = "IAM policy for lambda reading files from s3"
