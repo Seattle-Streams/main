@@ -22,7 +22,7 @@ terraform {
 }
 
 module "messages_api" {
-  source = "../modules/gateway"
+  source = "../modules/api_gateway"
 
   name        = "messageAPI"
   description = "This is the Civic Coffee Hour API"
