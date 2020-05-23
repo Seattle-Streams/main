@@ -19,7 +19,7 @@ resource "aws_lambda_function" "twilio_lambda" {
 }
 
 resource "aws_lambda_alias" "twilio_lambda_alias" {
-  name             = "production_twilio_lambda"
+  name             = "production"
   description      = "The twilio lambda in production"
   function_name    = "${aws_lambda_function.twilio_lambda.arn}"
   function_version = "$LATEST"
