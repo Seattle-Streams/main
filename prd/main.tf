@@ -28,6 +28,7 @@ module "messages_api" {
   description = "This is the Civic Coffee Hour API"
   dependencies = [
     "${module.process_messages_proxy.depended_on}",
+    # "${module.google_auth_proxy.depended_on}"
   ]
 }
 
@@ -163,16 +164,6 @@ module "auth_bucket" {
   bucket_name = "auth-resources"
   tag_name    = "auth-resources"
   environment = "${local.environment}"
-}
-
-# Jenkins build server builds lambda function code
-module "jenkins_build_server" {
-  source = "../modules/build_server"
-
-  account_id                  = "${data.aws_caller_identity.current.account_id}"
-  jenkins                     = "${var.jenkins}"
-  process_messages_bucket_arn = "${module.process_messages_bucket.arn}"
-  region                      = "${var.region}"
 }
 
 # Build pipelines for lambdas
