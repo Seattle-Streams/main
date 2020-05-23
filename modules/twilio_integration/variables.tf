@@ -1,4 +1,7 @@
 variable "account_id" {}
+
+variable "alias" {}
+
 variable "bucket_id" {}
 
 variable "queue_arn" {
