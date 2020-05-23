@@ -18,6 +18,13 @@ resource "aws_lambda_function" "twilio_lambda" {
   ]
 }
 
+resource "aws_lambda_alias" "twilio_lambda_alias" {
+  name             = "production_twilio_lambda"
+  description      = "The twilio lambda in production"
+  function_name    = "${aws_lambda_function.twilio_lambda.arn}"
+  function_version = "$LATEST"
+}
+
 ####################################################################################################
 ##########################         Lambda Policies         #########################################
 ####################################################################################################
@@ -25,7 +32,7 @@ resource "aws_lambda_function" "twilio_lambda" {
 module "twilio_lambda_execution_role" {
   source = "../iam_role"
 
-  name        = "twilio_lambda"
+  name        = "twilio_lambda_execution_role"
   identifiers = "lambda.amazonaws.com"
 }
 
