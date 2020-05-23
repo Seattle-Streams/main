@@ -25,11 +25,6 @@ resource "aws_lambda_alias" "twilio_lambda_alias" {
   function_version = "$LATEST"
 }
 
-data "aws_lambda_function" "production_alias" {
-  function_name = "twilio_lambda"
-  qualifier     = "${var.alias}"
-}
-
 ####################################################################################################
 ##########################         Lambda Policies         #########################################
 ####################################################################################################
