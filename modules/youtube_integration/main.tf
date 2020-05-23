@@ -20,6 +20,12 @@ resource "aws_lambda_function" "youtube_lambda" {
   ]
 }
 
+# resource "aws_lambda_alias" "youtube_lambda_alias" {
+#   name             = "production_youtube_lambda"
+#   description      = "The youtube lambda in production"
+#   function_name    = "${aws_lambda_function.youtube_lambda.arn}"
+#   function_version = "$LATEST"
+# }
 
 ####################################################################################################
 ##########################         Lambda Policies         #########################################
@@ -28,7 +34,7 @@ resource "aws_lambda_function" "youtube_lambda" {
 module "youtube_lambda_execution_role" {
   source = "../iam_role"
 
-  name        = "youtube_lambda"
+  name        = "youtube_lambda_execution_role"
   identifiers = "lambda.amazonaws.com"
 }
 # This is to manage the CloudWatch Log Group for the Lambda Function.
@@ -62,7 +68,7 @@ module "accessing_dynamo" {
   source = "../iam_policy"
 
   #   "dynamodb:PutItem" allows you to create new items
-  actions     = ["dynamodb:GetItem", ]
+  actions     = ["dynamodb:Query", "dynamodb:Scan", "dynamodb:GetItem", "dynamodb:UpdateItem"]
   description = "IAM policy for reading items from dynamo"
   effect      = "Allow"
   name        = "accessing_dynamo"
