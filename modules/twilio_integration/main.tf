@@ -32,7 +32,7 @@ resource "aws_lambda_alias" "twilio_lambda_alias" {
 module "twilio_lambda_execution_role" {
   source = "../iam_role"
 
-  name        = "twilio_lambda_execution_role"
+  name        = "twilio_lambda"
   identifiers = "lambda.amazonaws.com"
 }
 
